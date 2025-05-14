@@ -31,9 +31,7 @@ export const loginAPI = async (payload: { email: string, password: string }) => 
               }
           }
       );
-      console.log("login response",response.data);
       localStorage.setItem("token", response?.data?.token);
-      // console.log(token);
       localStorage.setItem("user", JSON.stringify(response?.data));
       const userResponse : UserResponse ={
         ...response.data,
@@ -42,7 +40,7 @@ export const loginAPI = async (payload: { email: string, password: string }) => 
       return userResponse;
   }
   catch (error) {
-      console.log("Error Occurred while Signing In: ", error);
+      toast.success("Error Occurred while Signing In: ", error);
   }
 }
 
@@ -58,14 +56,12 @@ export const signup = async (payload: { name: string, mobile_number: string , em
         'Accept': 'application/json',
       },
     });
-
-    console.log('Signup response:', response);
     return response.data;
 
   } catch (error: any) {
-    console.error('Error Occurred while Signing Up:', error);
+    toast.error('Error Occurred while Signing Up:', error);
     const errorMessage = error.response?.data?.errors;
-    console.log("ERROR MESSAGE: ", errorMessage);
+    toast.error("ERROR MESSAGE: ", errorMessage);
 
     if (Array.isArray(errorMessage) && errorMessage.length > 1) {
       toast.error(errorMessage[0]);
@@ -95,9 +91,6 @@ export const sendTokenToBackend = async (token: string): Promise<any> => {
       throw new Error('No authentication token found in user data.');
     }
 
-    console.log('Sending FCM token to backend:', token);
-    console.log('Using auth token:', token);
-
     const response = await fetch('https://movie-explorer-ror-aalekh-2ewg.onrender.com/api/v1/update_device_token', {
       method: 'POST',
       headers: {
@@ -113,10 +106,10 @@ export const sendTokenToBackend = async (token: string): Promise<any> => {
     }
 
     const data = await response.json();
-    console.log('Device token sent to backend successfully:', data);
+    toast.success('Device token sent to backend successfully:');
     return data;
   } catch (error) {
-    console.error('Error sending device token to backend:', error);
+    toast.error('Error sending device token to backend:', error);
     throw error;
   }
 };

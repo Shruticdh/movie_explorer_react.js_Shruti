@@ -6,7 +6,6 @@ import toast from "react-hot-toast";
 export const createSubscription = async (planType: string): Promise<string> => {
     try {
       const token = localStorage.getItem("token");
-      console.log("Retrieved token:", token);
       if (!token) {
         toast.error("You need to sign in first.");
         throw new Error("No authentication token found");
@@ -36,7 +35,7 @@ export const createSubscription = async (planType: string): Promise<string> => {
 
       return checkoutUrl;
     } catch (error: any) {
-      console.error('Error creating subscription:', error);
+      toast.error('Error creating subscription:', error);
       throw new Error(error.message || 'Failed to initiate subscription');
     }
 };

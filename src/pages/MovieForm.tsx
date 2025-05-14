@@ -49,7 +49,6 @@ const MovieForm = () => {
     if (isEditMode && id) {
       getMoviesById(Number(id))
         .then((res) => {
-          console.log("MOVIE DATA RESULT: ", res);
           const movie = res;
           if (!movie) {
             toast.error("Movie details not found");
@@ -161,11 +160,6 @@ const MovieForm = () => {
                   type: "number",
                   placeholder: "e.g. 2025",
                 },
-                // {
-                //   name: "is_premium",
-                //   type: "boolean",
-                //   placeholder: "Basic or Premium",
-                // },
               ].map((field, i) => (
                 <motion.div
                   key={field.name}

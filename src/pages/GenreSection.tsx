@@ -20,9 +20,12 @@ const GenreSection: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+    const [role, setRole] = useState<string | null>(null); 
 
   const fetchMovies = async (page: number) => {
     try {
+       const user = JSON.parse(localStorage.getItem('user') || '{}');
+    setRole(user?.role);
       const data = await getAllMoviesPagination(page);
       setMovies(data.movies);
       setTotalPages(data.pagination.total_pages);
@@ -33,6 +36,8 @@ const GenreSection: React.FC = () => {
 
   const handleGenreClick = async (genre: string) => {
     try {
+       const user = JSON.parse(localStorage.getItem('user') || '{}');
+    setRole(user?.role);
       const movieData = await getMoviesByGenre(genre);
       setMovies(movieData.movies);
       setSelectedGenre(genre);
@@ -52,7 +57,6 @@ const GenreSection: React.FC = () => {
     }
   }, [currentPage, selectedGenre]);
 
-  // Animation Variants
   const movieContainerVariants = {
     hidden: {},
     show: {
@@ -103,7 +107,7 @@ const GenreSection: React.FC = () => {
                     imageUrl={movie.poster_url}
                     duration={`${movie.duration} min`}
                     genre={movie.genre}
-                    role="supervisor"
+                    role={role || undefined}
                   />
                 </motion.div>
               ))}

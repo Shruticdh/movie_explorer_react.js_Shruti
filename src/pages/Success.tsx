@@ -22,7 +22,7 @@ const Success = () => {
       }
 
       try {
-        const authToken = 'your-valid-jwt-token-here'; // Replace with real token
+        const authToken = 'your-valid-jwt-token-here'; 
         const response = await axios.get(
           `https://movie-explorer-ror-ashutosh-singh.onrender.com/api/v1/subscriptions/success?session_id=${sessionId}`,
           {

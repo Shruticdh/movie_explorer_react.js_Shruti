@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaPlay, FaClock } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAllMovies } from '../Services/MovieService'
+import toast from "react-hot-toast";
 
 interface Movie {
   id: number;
@@ -41,7 +42,7 @@ const MovieBanner: React.FC = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       const allMovies = await getAllMovies();
-      console.log("ALL MOVIES INSIDE THE COMPONENT: ", allMovies)
+      toast.success("You Are in to MOVIEXPO: ", allMovies)
       if (allMovies && allMovies.length > 0) {
         setMovies(allMovies);
       }
@@ -77,7 +78,6 @@ const MovieBanner: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.8 }}
-          // className="absolute inset-0 w-full h-full object-cover bg-top bg-center"
           className="absolute inset-0 w-full h-full object-cover object-top max-sm:object-cover"
         />
       </AnimatePresence>

@@ -4,7 +4,6 @@ const BASE_URL = 'https://movie-explorer-ror-ashutosh-singh.onrender.com/api/v1/
 
 export const addMovie = async (formData) => {
   const token = localStorage.getItem('token');
-  console.log(token);
   try {
     const response = await axios.post(BASE_URL, formData, {
       headers: {
@@ -13,8 +12,6 @@ export const addMovie = async (formData) => {
         Accept: 'application/json',
       },
     });
-    console.log(token);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;

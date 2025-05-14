@@ -2,8 +2,6 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import { Movie } from '@mui/icons-material';
 
-// const BASE_URL = 'https://movie-explorer-ror-aalekh-2ewg.onrender.com'; 
-
 const BASE_URL = 'https://movie-explorer-ror-ashutosh-singh.onrender.com'; 
 
 interface Movie {
@@ -53,11 +51,11 @@ interface Movie {
         },
       };
   
-      console.log('Fetched movies:', movieData);
+      toast.success('Fetched movies:');
       return movieData;
   
     } catch (error: any) {
-      console.error('Error fetching movies:', error.message);
+      toast.error('Error fetching movies:', error.message);
       return {
         movies: [],
         pagination: {
@@ -80,10 +78,10 @@ interface Movie {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       });
-  
+      toast.success('Fetched movie');
       return response.data.movies || [];
     } catch (error: any) {
-      console.error('Error searching movies:', error.message);
+      toast.error('Error searching movies:', error.message);
       return [];
     }
   };
@@ -100,12 +98,11 @@ interface Movie {
                 }
             });
             const movies : Movie[] = response.data;
-            console.log("fetched movies from the api", movies);
-
+            toast.success("fetched movies from the api");
             return movies.movies;
     }
     catch(error : any){
-        console.log("error ", error.message);
+        toast.error("error fetching movies", error.message);
     }
 }
 
@@ -122,18 +119,11 @@ export const getMoviesById = async (id: number) => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      const movie: Movie = await response.data; 
-
-      // if (movie.is_premium && plan !== "premium") {
-      //   toast.error("You need to subscribe to a premium plan to watch this movie.");
-      //   return null;
-      // }
-
-      
-      console.log('Fetched movie by ID:', movie);
+      const movie: Movie = await response.data;       
+      toast.success('Fetched movie by ID');
       return movie;
     } catch (error: any) {
-      console.error(`Error fetching movie with ID ${id}: ${error}`);
+      toast.error(`Error fetching movie with ID ${id}: ${error}`);
       return null;
     }
   };
@@ -150,7 +140,7 @@ export const getMoviesById = async (id: number) => {
       });
       return response.data;
     } catch (error) {
-      console.error("Error fetching movies by genre:", error.message);
+      toast.error("Error fetching movies by genre:", error.message);
       return { movies: [] };
     }
   };

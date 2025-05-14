@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getAllMovies } from '../Services/MovieService';
+import { useNavigate } from 'react-router-dom';
 import MovieCard from './MovieCard';
 import { motion, useInView } from 'framer-motion';
 
@@ -9,6 +10,7 @@ interface Movie {
   rating: number;
   duration: number;
   poster_url: string;
+  is_premium: boolean;
   genre: string;
 }
 
@@ -17,6 +19,7 @@ const MovieCarousel: React.FC = () => {
   const [popular, setPopular] = useState<Movie[]>([]);
   const [movie, setMovie] = useState<Movie | null>(null);
   const [role, setRole] = useState<string | null>(null); 
+  const navigate = useNavigate();
 
   const featuredRef = useRef(null);
   const popularRef = useRef(null);
@@ -34,6 +37,9 @@ const MovieCarousel: React.FC = () => {
       }
     });
   }, []);
+   const handleClick = () =>{
+    navigate('/all-movies')
+   }
 
   const renderCarousel = (
     title: string,
@@ -46,7 +52,7 @@ const MovieCarousel: React.FC = () => {
         <h2 className="text-white text-[1.5rem]">{title}</h2>
         <button
           className="text-sm text-white hover:underline hover:text-red-600"
-          onClick={() => console.log('View All clicked')}
+          onClick={handleClick}
         >
           View All
         </button>
@@ -81,6 +87,7 @@ const MovieCarousel: React.FC = () => {
                 duration={`${movie.duration} min`}
                 genre={movie.genre}
                 role={role || undefined}
+                is_premium={movie.is_premium}
               />
             </motion.div>
           </motion.div>

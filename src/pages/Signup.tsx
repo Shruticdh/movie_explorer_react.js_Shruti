@@ -65,7 +65,7 @@ class Signup extends Component<SignupPageProps, SignupState> {
 
   handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { name, mobile, email, password, confirmPassword } = this.state;
+    const { name, mobile, email, password} = this.state;
     const fields: (keyof Omit<SignupState, 'errors'>)[] = ['name', 'mobile', 'email', 'password', 'confirmPassword'];
   
     fields.forEach((field) => this.validateField(field, this.state[field]));
@@ -76,11 +76,9 @@ class Signup extends Component<SignupPageProps, SignupState> {
     try {
       const userData = { name,mobile_number:  mobile, email, password };
       const response = await signup(userData); 
-      console.log('Signup successful:', response);
       toast.success('Signup successful! Please login.');
       this.props.navigate('/');
     } catch (error: any) {
-      console.error('Signup failed:', error);
       const errorMessage = error.response?.data?.message || 'Signup failed. Please try again.';
       toast.error(errorMessage);
     }

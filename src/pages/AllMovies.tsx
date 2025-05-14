@@ -13,6 +13,7 @@ interface Movie {
   title: string;
   poster_url: string;
   duration: number;
+  is_premium: boolean;
   genre: string;
   quality?: string;
 }
@@ -20,6 +21,7 @@ interface Movie {
 const AllMovies: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialPage = parseInt(searchParams.get('page') || '1', 10);
+    const [role, setRole] = useState<string | null>(null); 
 
   const [movies, setMovies] = useState<Movie[]>([]);
   const [currentPage, setCurrentPage] = useState(initialPage);
@@ -44,6 +46,8 @@ const AllMovies: React.FC = () => {
   }, [debouncedSearchTerm, currentPage]);
 
   const fetchMovies = async (page: number) => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    setRole(user?.role);
     const data = await getAllMoviesPagination(page);
     setMovies(data.movies);
     setTotalPages(data.pagination.total_pages);
@@ -87,8 +91,9 @@ const AllMovies: React.FC = () => {
                 title={movie.title}
                 imageUrl={movie.poster_url}
                 duration={`${movie.duration} min`}
+                is_premium={movie.is_premium}
                 genre={movie.genre}
-                role="supervisor"
+                role={role || undefined}
               />
             </motion.div>
           ))}

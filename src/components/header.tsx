@@ -25,6 +25,7 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("userPlan");
     navigate("/");
   };
 
@@ -221,6 +222,7 @@ const Header: React.FC = () => {
             { label: "Home", action: handleHomePage },
             { label: "Movies", action: handleMoveToMovies },
             { label: "Contact", action: () => {} },
+            {label: "Genre", action: handleMoveToGenre},
             ...(user?.role === "supervisor"
               ? [{ label: "Add Movies", action: handleMoveToAddMovies }]
               : []),

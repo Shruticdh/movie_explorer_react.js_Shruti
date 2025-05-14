@@ -1,10 +1,9 @@
-
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Pencil, Trash2, Crown } from "lucide-react";
 import { deleteMovie } from "../Services/AdminServices";
 import { toast } from "react-toastify";
+import { Movie } from "@mui/icons-material";
 
 interface SimpleMovieCardProps {
   id: string;
@@ -28,30 +27,31 @@ const MovieCard: React.FC<SimpleMovieCardProps> = ({
   role,
 }) => {
   const navigate = useNavigate();
-  
-  // const handleClick = () => {
-  //   if (is_premium) {
-  //     navigate("/subscription");
-  //   } else {
-  //     navigate(`/movie-details/${id}`, {
-  //       state: { id, title, imageUrl, duration, genre, quality },
-  //     });
-  //   }
-  // };
+  const userPlan = localStorage.getItem("userPlan");
 
+  const handlePremiumAccess = () => {
+    if (is_premium) {
+      handlePremiumAccess();
+    } else {
+      handleNonPremiumAccess();
+    }
+  };
+
+  const handleNonPremiumAccess = () => {
+    navigate(`/movie-details/${id}`, {
+      state: { id, title, imageUrl, duration, genre, quality },
+    });
+  };
 
   const handleClick = () => {
-    const userPlan = localStorage.getItem("userPlan");
-    // Check: if movie is premium and user does NOT have a premium plan
-    if (is_premium && userPlan !== "premium") {
-      navigate("/subscription");
-    } else {
+    if (!is_premium || userPlan === "premium") {
       navigate(`/movie-details/${id}`, {
         state: { id, title, imageUrl, duration, genre, quality },
       });
+    } else {
+      navigate("/subscription");
     }
   };
-  
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -60,7 +60,6 @@ const MovieCard: React.FC<SimpleMovieCardProps> = ({
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
-
     try {
       await deleteMovie(id);
       toast.success("Movie deleted successfully");
@@ -82,15 +81,14 @@ const MovieCard: React.FC<SimpleMovieCardProps> = ({
           alt={title}
           className="w-full h-[240px] object-cover"
         />
-
-        {/* Premium Crown */}
-        {is_premium && (
-          <div className="absolute top-2 left-2 bg-yellow-500 p-1 rounded-full z-10">
-            <Crown size={14} color="white" />
-          </div>
-        )}
-
-        {/* Edit/Delete for supervisor */}
+        {is_premium === true &&(
+            <div className="absolute top-2 left-2 p-1 rounded-full z-20">
+              <span className="text-yellow-200 text-xs font-semibold">
+                <Crown size={20} color="yellow" />
+                Premium
+              </span>
+            </div>
+          )}
         {role === "supervisor" && (
           <div className="absolute top-2 right-2 flex gap-2 z-10">
             <button
