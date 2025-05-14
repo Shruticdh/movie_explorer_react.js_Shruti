@@ -15,7 +15,6 @@ interface Movie {
   description: string;
   is_premium: boolean;
   main_lead: string;
-  streaming_platform: string;
   poster_url: string;
   banner_url: string;
 }
@@ -42,9 +41,10 @@ const MovieBanner: React.FC = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       const allMovies = await getAllMovies();
-      toast.success("You Are in to MOVIEXPO: ", allMovies)
+      toast.success("You Are in to MOVIEXPO: ")
       if (allMovies && allMovies.length > 0) {
         setMovies(allMovies);
+          console.log("Fetched Movies:", allMovies); 
       }
     };
 

@@ -4,15 +4,6 @@ import { sendTokenToBackend } from "../Services/userServices";
 
 const firebaseConfig = {
 
-  // apiKey: "AIzaSyCKt2wYuYzr0uKWe8o5jUE6p9wb-3lSK68",
-  // authDomain: "movie-explorer-5bc8a.firebaseapp.com",
-  // projectId: "movie-explorer-5bc8a",
-  // storageBucket: "movie-explorer-5bc8a.firebasestorage.app",
-  // messagingSenderId: "561268525206",
-  // appId: "1:561268525206:web:9ba893c094bf72aed81ab7",
-  // measurementId: "G-XPP4G1SXPV"
-
-
   apiKey: "AIzaSyA-ovOQODK1M7bODI3-HQd6-Yzw4STOxQE",
   authDomain: "movieexplorer-ce91a.firebaseapp.com",
   projectId: "movieexplorer-ce91a",

@@ -16,7 +16,7 @@ interface Movie {
   director: string;
   duration: number;
   description: string;
-  premium: boolean;
+  is_premium: boolean; 
   main_lead: string;
   streaming_platform: string;
   poster_url: string;
@@ -56,9 +56,9 @@ const MovieDetailPage: React.FC = () => {
         const data = await getMoviesById(Number(id));
         if (data?.is_premium) {
           console.log("MOVIE DETAILS: ", data);
-          setMovie(data);
+          setMovie(data as Movie);
         } else {
-          setMovie(data);
+          setMovie(data as Movie);
         }
       } catch (error: any) {
         if (error.response?.status === 401 || error.response?.status === 403) {

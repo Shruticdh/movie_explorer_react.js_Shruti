@@ -97,9 +97,11 @@ interface Movie {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
             });
-            const movies : Movie[] = response.data;
+
+            console.log('API Response:', response.data);
+            const movies : Movie[] = response.data.movies;
             toast.success("fetched movies from the api");
-            return movies.movies;
+            return movies;
     }
     catch(error : any){
         toast.error("error fetching movies", error.message);
@@ -108,9 +110,6 @@ interface Movie {
 
 export const getMoviesById = async (id: number) => {
   const plan=localStorage.getItem("userPlan");
-
-  
-  
     try {
       const response = await axios.get(`${BASE_URL}/api/v1/movies/${id}`, {
         headers: {

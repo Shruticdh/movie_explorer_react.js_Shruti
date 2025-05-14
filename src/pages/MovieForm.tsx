@@ -84,7 +84,7 @@ const MovieForm = () => {
 
     const formData = new FormData();
     Object.entries(form).forEach(([key, value]) => {
-      formData.append(`movie[${key}]`, value);
+      formData.append(`movie[${key}]`, typeof value === "boolean" ? String(value) : value);
     });
     if (banner) formData.append("movie[banner]", banner);
     if (poster) formData.append("movie[poster]", poster);
