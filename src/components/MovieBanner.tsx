@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { FaPlay, FaClock } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import { getAllMovies } from '../Services/MovieService'
+import { getAllMovies } from "../Services/MovieService";
 import toast from "react-hot-toast";
 
 interface Movie {
@@ -37,14 +36,23 @@ const itemVariants = {
 const MovieBanner: React.FC = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [currentMovieIndex, setCurrentMovieIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchMovies = async () => {
-      const allMovies = await getAllMovies();
-      toast.success("You Are in to MOVIEXPO: ")
-      if (allMovies && allMovies.length > 0) {
-        setMovies(allMovies);
-          console.log("Fetched Movies:", allMovies); 
+      try {
+        setIsLoading(true);
+        const allMovies = await getAllMovies();
+        if (allMovies && allMovies.length > 0) {
+          setMovies(allMovies);
+        } else {
+          toast.error("No movies available");
+        }
+      } catch (error) {
+        console.error("Failed to fetch movies:", error);
+        toast.error("Failed to load movies");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -54,6 +62,7 @@ const MovieBanner: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentMovieIndex((prev) => {
+        console.log("movies length", movies.length);
         if (movies.length === 0) return 0;
         return (prev + 1) % movies.length;
       });
@@ -62,10 +71,20 @@ const MovieBanner: React.FC = () => {
     return () => clearInterval(interval);
   }, [movies]);
 
+  if (isLoading || movies.length === 0) {
+    return (
+      <section className="relative h-[600px] md:w-full bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white text-lg font-semibold">Loading Movies...</p>
+        </div>
+      </section>
+    );
+  }
+
   const currentMovie = movies[currentMovieIndex];
 
   if (!currentMovie) return null;
-  
 
   return (
     <section className="relative h-[600px] md:w-full text-white overflow-hidden">
@@ -84,7 +103,7 @@ const MovieBanner: React.FC = () => {
 
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
 
-      <div className="relative z-10 flex flex-col items-start justify-center min-h-250 md:min-h-200 text-left px-6 md:px-16 py-10">
+      <div className="relative z-10 flex flex-col items-start justify-center min-h-250 md:min-h-200 text-left px-6 md:px-16 py-10 -mt-15">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentMovie.title}
@@ -93,39 +112,40 @@ const MovieBanner: React.FC = () => {
             animate="visible"
             exit="exit"
           >
-            <motion.div variants={itemVariants} className="hidden md:flex gap-4 mb-6">
-              <button className="flex items-center bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-md transition">
-                <FaPlay className="text-sm mr-2" />
-                Watch Now
-              </button>
-              <button className="flex items-center border-2 border-white hover:bg-white hover:text-black text-white font-semibold px-4 py-2 rounded-md transition">
-                <FaClock className="text-sm mr-2" />
-                Watch Later
-              </button>
-            </motion.div>
-
-            <motion.h1 variants={itemVariants} className="text-2xl md:text-4xl font-bold mb-4">
+            <motion.h1
+              variants={itemVariants}
+              className="text-2xl md:text-5xl font-bold mb-6"
+            >
               {currentMovie.title}
             </motion.h1>
 
-            <motion.div variants={itemVariants} className="flex flex-wrap gap-2 mb-4">
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-wrap gap-2 mb-4"
+            >
               {currentMovie.genre.split(",").map((g) => (
                 <span
                   key={g}
-                  className="bg-white text-black px-3 py-1 rounded-full text-sm font-semibold"
+                  className="bg-red-700 text-white px-3 py-1 rounded-full text-md font-semibold"
                 >
                   {g.trim()}
                 </span>
               ))}
             </motion.div>
 
-            <motion.div variants={itemVariants} className="flex flex-wrap gap-4 text-gray-300 text-xs mb-4">
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-wrap gap-4 text-gray-300 text-sm mb-4"
+            >
               <span>{currentMovie.release_year}</span>
               <span>{currentMovie.duration} min</span>
               <span>{currentMovie.rating} ⭐</span>
             </motion.div>
 
-            <motion.p variants={itemVariants} className="text-gray-300 text-xs md:text-sm mb-8 line-clamp-2 md:line-clamp-4 max-w-md">
+            <motion.p
+              variants={itemVariants}
+              className="text-gray-300 text-sm md:text-sm mb-8 line-clamp-2 md:line-clamp-4 max-w-md"
+            >
               {currentMovie.description}
             </motion.p>
           </motion.div>
@@ -136,10 +156,3 @@ const MovieBanner: React.FC = () => {
 };
 
 export default MovieBanner;
-
-
-
-
-
-
-

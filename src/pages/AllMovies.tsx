@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getAllMoviesPagination  , searchMovies as searchMoviesAPI} from '../Services/MovieService';
+import { getAllMoviesPagination, searchMovies as searchMoviesAPI } from '../Services/MovieService';
 import MovieCard from '../components/MovieCard';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import { motion } from 'framer-motion';
 import SearchBar from '../components/SearchBar';
 import { useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+import toast from 'react-hot-toast';
 
 interface Movie {
   id: number;
@@ -21,18 +21,18 @@ interface Movie {
 const AllMovies: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialPage = parseInt(searchParams.get('page') || '1', 10);
-    const [role, setRole] = useState<string | null>(null); 
-
+  const [role, setRole] = useState<string | null>(null);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, 500); 
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [searchTerm]);
@@ -46,23 +46,49 @@ const AllMovies: React.FC = () => {
   }, [debouncedSearchTerm, currentPage]);
 
   const fetchMovies = async (page: number) => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    setRole(user?.role);
-    const data = await getAllMoviesPagination(page);
-    setMovies(data.movies);
-    setTotalPages(data.pagination.total_pages);
+    try {
+      setIsLoading(true);
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      setRole(user?.role);
+      const data = await getAllMoviesPagination(page);
+      if (data.movies && data.movies.length > 0) {
+        setMovies(data.movies);
+        setTotalPages(data.pagination.total_pages);
+      } else {
+        setMovies([]);
+        setTotalPages(1);
+        toast.error('No movies found');
+      }
+    } catch (error: any) {
+      console.error('Fetch error:', error.message);
+      setMovies([]);
+      toast.error('Failed to load movies');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const searchMovies = async (query: string) => {
     try {
+      setIsLoading(true);
       const results = await searchMoviesAPI(query);
-      setMovies(results);
-      setTotalPages(1); 
+      if (results && results.length > 0) {
+        setMovies(results);
+        setTotalPages(1);
+      } else {
+        setMovies([]);
+        setTotalPages(1);
+        toast.error('No movies found for this search');
+      }
     } catch (error: any) {
       console.error('Search error:', error.message);
       setMovies([]);
+      toast.error('Search failed');
+    } finally {
+      setIsLoading(false);
     }
   };
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     setSearchParams({ page: page.toString() });
@@ -83,23 +109,34 @@ const AllMovies: React.FC = () => {
           </h1>
         </motion.div>
 
-        <div className="w-[67%] max-w-7xl flex max-sm:w-[92%] flex-wrap gap-[25px] justify-center items-center !mb-[50px] max-md:w-[90%] max-xl:w-[90%] max-[1515px]:w-[90%]">
-          {movies.map((movie, index) => (
-            <motion.div key={movie.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05, duration: 0.4 }}>
-              <MovieCard
-                id={movie.id.toString()}
-                title={movie.title}
-                imageUrl={movie.poster_url}
-                duration={`${movie.duration} min`}
-                is_premium={movie.is_premium}
-                genre={movie.genre}
-                role={role || undefined}
-              />
-            </motion.div>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center min-h-[400px]">
+            <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-white text-lg font-semibold">Loading Movies...</p>
+          </div>
+        ) : movies.length === 0 ? (
+          <div className="flex flex-col items-center justify-center min-h-[400px]">
+            <p className="text-white text-lg font-semibold">No Movies Available</p>
+          </div>
+        ) : (
+          <div className="w-[67%] max-w-7xl flex max-sm:w-[92%] flex-wrap gap-[25px] justify-center items-center !mb-[50px] max-md:w-[90%] max-xl:w-[90%] max-[1515px]:w-[90%]">
+            {movies.map((movie, index) => (
+              <motion.div key={movie.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05, duration: 0.4 }}>
+                <MovieCard
+                  id={movie.id.toString()}
+                  title={movie.title}
+                  imageUrl={movie.poster_url}
+                  duration={`${movie.duration} min`}
+                  is_premium={movie.is_premium}
+                  genre={movie.genre}
+                  role={role || undefined}
+                />
+              </motion.div>
+            ))}
+          </div>
+        )}
 
-        {!debouncedSearchTerm && (
+        {!debouncedSearchTerm && movies.length > 0 && !isLoading && (
           <motion.div className="flex justify-center items-center mt-8 gap-2 flex-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
             <button
               onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}

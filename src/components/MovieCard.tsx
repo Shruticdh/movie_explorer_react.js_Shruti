@@ -44,7 +44,7 @@ const MovieCard: React.FC<SimpleMovieCardProps> = ({
   };
 
   const handleClick = () => {
-    if (!is_premium || userPlan === "premium") {
+    if (!is_premium || userPlan === "premium" || role === "supervisor" ) {
       navigate(`/movie-details/${id}`, {
         state: { id, title, imageUrl, duration, genre, quality },
       });

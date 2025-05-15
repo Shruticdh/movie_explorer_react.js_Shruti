@@ -13,12 +13,12 @@ interface GenreProps {
 const genres: Genre[] = [
   { name: "Fantasy", imageUrl: "src/assets/Avatar2.jpg" },
   { name: "Sci-fi", imageUrl: "src/assets/Interseller.jpg" },
-  { name: "Drama", imageUrl: "src/assets/DarkKnight.jpg" },
-  { name: "Romance", imageUrl: "src/assets/Incepection.png" },
-  { name: "Action", imageUrl: "src/assets/Avatar2.jpg" },
-  { name: "Horror", imageUrl: "src/assets/Interseller.jpg" },
+  { name: "Drama", imageUrl: "src/assets/FatherBanner.jpg" },
+  { name: "Romance", imageUrl: "src/assets/LoveBanner3.jpg" },
+  { name: "Action", imageUrl: "src/assets/DuneTwoBanner.jpg" },
+  { name: "Horror", imageUrl: "src/assets/ConjuringBanner.jpg" },
   { name: "Adventure", imageUrl: "src/assets/DarkKnight.jpg" },
-  { name: "Comedy", imageUrl: "src/assets/Incepection.png" },
+  { name: "Comedy", imageUrl: "src/assets/BoothBanner3.jpg" },
 ];
 
 const containerVariants = {

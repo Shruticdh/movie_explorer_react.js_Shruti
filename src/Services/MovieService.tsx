@@ -51,7 +51,7 @@ interface Movie {
         },
       };
   
-      toast.success('Fetched movies:');
+      // toast.success('Fetched movies:');
       return movieData;
   
     } catch (error: any) {
@@ -78,7 +78,7 @@ interface Movie {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      toast.success('Fetched movie');
+      // toast.success('Fetched movie');
       return response.data.movies || [];
     } catch (error: any) {
       toast.error('Error searching movies:', error.message);
@@ -98,9 +98,9 @@ interface Movie {
                 }
             });
 
-            console.log('API Response:', response.data);
+            // console.log('API Response:', response.data);
             const movies : Movie[] = response.data.movies;
-            toast.success("fetched movies from the api");
+            // toast.success("fetched movies from the api");
             return movies;
     }
     catch(error : any){
@@ -119,7 +119,7 @@ export const getMoviesById = async (id: number) => {
         },
       });
       const movie: Movie = await response.data;       
-      toast.success('Fetched movie by ID');
+      // toast.success('Fetched movie by ID');
       return movie;
     } catch (error: any) {
       toast.error(`Error fetching movie with ID ${id}: ${error}`);

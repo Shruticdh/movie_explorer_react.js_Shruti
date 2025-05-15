@@ -17,7 +17,6 @@ interface Movie {
 const MovieCarousel: React.FC = () => {
   const [featured, setFeatured] = useState<Movie[]>([]);
   const [popular, setPopular] = useState<Movie[]>([]);
-  const [movie, setMovie] = useState<Movie | null>(null);
   const [role, setRole] = useState<string | null>(null); 
   const navigate = useNavigate();
 

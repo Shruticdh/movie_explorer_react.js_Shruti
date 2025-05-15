@@ -8,6 +8,7 @@ const Header: React.FC = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [user, setUser] = useState<{ email: string; role: string } | null>(null);
+  const [plan , setPlan] = useState< string  | null>(null);
 
   const navigate = useNavigate();
 
@@ -15,6 +16,14 @@ const Header: React.FC = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+    }
+
+    const planType = localStorage.getItem("userPlan")
+    console.log("PLAN TYPE: ", planType);
+    if(planType){
+      setPlan(planType);
+    }else{
+      setPlan("basic");
     }
   }, []);
 
@@ -43,7 +52,7 @@ const Header: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <button onClick={handleHomePage}>
+          <button onClick={handleHomePage} data-testid="logo">
             <div className="text-xl font-bold text-red-600 cursor-pointer">
               M<span className="text-white">OVIEXPO</span>
             </div>
@@ -58,6 +67,7 @@ const Header: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               onClick={handleHomePage}
+             data-testid="menu-item"
             >
               Home
             </motion.span>
@@ -68,6 +78,7 @@ const Header: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
               onClick={handleMoveToMovies}
+              data-testid="menu-item"
             >
               Movies
             </motion.span>
@@ -78,19 +89,10 @@ const Header: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
               onClick={handleMoveToGenre}
+              data-testid="menu-item"
             >
               Genre
             </motion.span>
-
-            <motion.span
-              className="hover:text-red-500 cursor-pointer"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              Contact
-            </motion.span>
-
             {user?.role === "supervisor" && (
               <motion.span
                 className="hover:text-red-500 cursor-pointer"
@@ -98,6 +100,7 @@ const Header: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35 }}
                 onClick={handleMoveToAddMovies}
+                data-testid="menu-item"
               >
                 Add Movies
               </motion.span>
@@ -106,6 +109,7 @@ const Header: React.FC = () => {
               <FiUser
                 className="cursor-pointer hover:text-red-500"
                 onClick={toggleAccountMenu}
+                data-testid="user-icon-button"
               />
 
               {showAccountMenu && (
@@ -128,7 +132,8 @@ const Header: React.FC = () => {
                   <hr className="my-2" />
                   <div className="flex flex-col space-y-2 text-sm">
                     <span className="cursor-pointer hover:text-red-500">
-                      Billing Statement
+                      Plan 
+                      : { plan }
                     </span>
                     <button
                       className="cursor-pointer p-1 bg-red-600 border border-red-600 rounded-lg hover:text-white-500"
@@ -146,6 +151,7 @@ const Header: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5 }}
+                data-testid="subscribe-button"
               >
                 Subscribe Now
               </motion.button>
@@ -162,6 +168,7 @@ const Header: React.FC = () => {
             <FiUser
               className="cursor-pointer hover:text-red-500"
               onClick={toggleAccountMenu}
+              data-testid="user-icon-button"
             />
 
             {showAccountMenu && (
@@ -200,11 +207,13 @@ const Header: React.FC = () => {
               <FaTimes
                 className="text-2xl cursor-pointer hover:text-red-500"
                 onClick={toggleMobileMenu}
+                data-testid="close-menu"
               />
             ) : (
               <FaBars
                 className="text-2xl cursor-pointer hover:text-red-500"
                 onClick={toggleMobileMenu}
+                data-testid="hamburger-menu"
               />
             )}
           </motion.div>
@@ -221,7 +230,6 @@ const Header: React.FC = () => {
           {[
             { label: "Home", action: handleHomePage },
             { label: "Movies", action: handleMoveToMovies },
-            { label: "Contact", action: () => {} },
             {label: "Genre", action: handleMoveToGenre},
             ...(user?.role === "supervisor"
               ? [{ label: "Add Movies", action: handleMoveToAddMovies }]
@@ -234,6 +242,7 @@ const Header: React.FC = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 * (index + 1) }}
               onClick={item.action}
+              data-testid="menu-item"
             >
               {item.label}
             </motion.span>
@@ -245,6 +254,7 @@ const Header: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.7, duration: 0.3 }}
+            data-testid="subscribe-button"
           >
             Subscribe Now
           </motion.button>

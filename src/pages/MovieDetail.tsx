@@ -16,9 +16,8 @@ interface Movie {
   director: string;
   duration: number;
   description: string;
-  is_premium: boolean; 
+  is_premium: boolean;
   main_lead: string;
-  streaming_platform: string;
   poster_url: string;
   banner_url: string;
 }
@@ -76,11 +75,28 @@ const MovieDetailPage: React.FC = () => {
   }, [id, navigate]);
 
   if (loading) {
-    return <div className="text-white p-4">Loading movie details...</div>;
+    return (
+      <div className="bg-black min-h-screen flex flex-col items-center justify-center">
+        <Header />
+        <div className="flex flex-col items-center justify-center min-h-[400px]">
+          <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-white text-lg font-semibold">Loading Movie Details...</p>
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   if (!movie) {
-    return <div className="text-white p-4">Movie not found</div>;
+    return (
+      <div className="bg-black min-h-screen flex flex-col items-center justify-center">
+        <Header />
+        <div className="flex flex-col items-center justify-center min-h-[400px]">
+          <p className="text-white text-lg font-semibold">Movie Not Found</p>
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   return (
@@ -147,15 +163,6 @@ const MovieDetailPage: React.FC = () => {
             <motion.p variants={itemVariant} className="text-gray-300 mt-4">
               {movie.description}
             </motion.p>
-
-            <motion.div variants={itemVariant} className="flex gap-4 mt-6">
-              <button className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-md font-semibold">
-              Watch Now
-              </button>
-              <button className="bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-md font-semibold">
-              Watchlist
-              </button>
-            </motion.div>
           </motion.div>
         </div>
       </motion.div>

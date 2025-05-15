@@ -47,8 +47,14 @@ const Success = () => {
   }, [location.search]);
 
   return (
-    <div className="min-h-screen bg-[#14141E] flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-[#1a1a2e] text-white rounded-lg shadow-lg p-6 border border-white/10">
+    <div className="min-h-screen bg-[#14141E] flex items-center justify-center relative px-4 ">
+      <div
+        className="absolute inset-0 bg-[url('./assets/background_Dark_signup.webp')] bg-cover bg-center"
+        style={{ filter: 'blur(4px)' }}
+      >
+        <div className="absolute inset-0 bg-black/40"></div>
+      </div>
+      <div className="max-w-md w-full bg-black/80  text-white rounded-lg shadow-lg p-6 border border-white/10 z-10">
         {loading ? (
           <div className="flex flex-col items-center">
             <div className="animate-spin h-10 w-10 border-4 border-red-600 border-t-transparent rounded-full mb-4" />

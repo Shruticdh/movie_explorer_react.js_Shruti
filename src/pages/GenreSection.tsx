@@ -5,6 +5,7 @@ import Footer from '../components/footer';
 import { getAllMoviesPagination, getMoviesByGenre } from '../Services/MovieService';
 import MovieCard from '../components/MovieCard';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 interface Movie {
   id: number;
@@ -20,29 +21,52 @@ const GenreSection: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
-    const [role, setRole] = useState<string | null>(null); 
+  const [role, setRole] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchMovies = async (page: number) => {
     try {
-       const user = JSON.parse(localStorage.getItem('user') || '{}');
-    setRole(user?.role);
+      setIsLoading(true);
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      setRole(user?.role);
       const data = await getAllMoviesPagination(page);
-      setMovies(data.movies);
-      setTotalPages(data.pagination.total_pages);
+      if (data.movies && data.movies.length > 0) {
+        setMovies(data.movies);
+        setTotalPages(data.pagination.total_pages);
+      } else {
+        setMovies([]);
+        setTotalPages(1);
+        toast.error('No movies found');
+      }
     } catch (error) {
       console.error("Error fetching all movies:", error);
+      setMovies([]);
+      toast.error('Failed to load movies');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleGenreClick = async (genre: string) => {
     try {
-       const user = JSON.parse(localStorage.getItem('user') || '{}');
-    setRole(user?.role);
+      setIsLoading(true);
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      setRole(user?.role);
       const movieData = await getMoviesByGenre(genre);
-      setMovies(movieData.movies);
-      setSelectedGenre(genre);
+      if (movieData.movies && movieData.movies.length > 0) {
+        setMovies(movieData.movies);
+        setSelectedGenre(genre);
+      } else {
+        setMovies([]);
+        setSelectedGenre(genre);
+        toast.error(`No movies found for genre: ${genre}`);
+      }
     } catch (error) {
       console.error("Error fetching movies by genre", error);
+      setMovies([]);
+      toast.error('Failed to load movies for this genre');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -86,12 +110,17 @@ const GenreSection: React.FC = () => {
 
         <Genre onGenreClick={handleGenreClick} />
 
-        <div className="bg-black text-white w-full flex flex-col justify-center items-center z-10 mt-3">
+        <div className="bg-black text-white w-full flex flex-col justify sensacióncenter items-center z-10 mt-3">
           <h1 className="text-3xl font-bold mb-5">
             Your Favorite Genre Movie <span className="text-red-500">Magic</span>
           </h1>
 
-          {movies.length > 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center min-h-[400px]">
+              <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+              <p className="text-white text-lg font-semibold">Loading Movies...</p>
+            </div>
+          ) : movies.length > 0 ? (
             <motion.div
               className="w-[67%] max-w-7xl flex flex-wrap gap-[25px] justify-center items-center !mb-[50px] max-sm:w-[92%] max-md:w-[90%] max-xl:w-[90%] max-[1515px]:w-[90%] mt-3"
               variants={movieContainerVariants}
@@ -113,10 +142,12 @@ const GenreSection: React.FC = () => {
               ))}
             </motion.div>
           ) : (
-            <p className="text-white text-center w-full">No movies found.</p>
+            <div className="flex flex-col items-center justify-center min-h-[400px]">
+              <p className="text-white text-lg font-semibold">No Movies Available</p>
+            </div>
           )}
 
-          {!selectedGenre && totalPages > 1 && (
+          {!selectedGenre && totalPages > 1 && !isLoading && movies.length > 0 && (
             <div className="flex flex-wrap justify-center gap-2 mt-8">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}

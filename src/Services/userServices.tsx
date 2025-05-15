@@ -80,36 +80,37 @@ interface ApiErrorResponse {
   message?: string;
 }
 
+
 export const sendTokenToBackend = async (token: string): Promise<any> => {
   try {
-    const token = localStorage.getItem('token');
-    console.log("TOKEN INSIDE SEND TOKEN: ", token)
-    if (!token) {
+    const userData = localStorage.getItem('user');
+    if (!userData) {
       throw new Error('No user data found. User might not be logged in.');
     }
-    if (!token) {
+
+    const user: UserData = JSON.parse(userData);
+    const authToken = user?.token;
+    if (!authToken) {
       throw new Error('No authentication token found in user data.');
     }
 
-    const response = await fetch('https://movie-explorer-ror-aalekh-2ewg.onrender.com/api/v1/update_device_token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ device_token: token }),
-    });
+    console.log('Sending FCM token to backend:', token);
+    console.log('Using auth token:', authToken);
 
-    if (!response.ok) {
-      const errorData: ApiErrorResponse = await response.json().catch(() => ({}));
-      throw new Error(`Failed to send device token: ${response.status} ${response.statusText} - ${errorData.message || 'Unknown error'}`);
-    }
+    const response = await axios.post(
+      `${BASE_URL}/api/v1/update_device_token`,
+      { device_token: token },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        }
+      }
+    );
 
-    const data = await response.json();
-    toast.success('Device token sent to backend successfully:');
-    return data;
-  } catch (error) {
-    toast.error('Error sending device token to backend:', error);
-    throw error;
+    console.log('Device token sent to backend successfully:', response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error('Error sending device token to backend:', error);
   }
 };

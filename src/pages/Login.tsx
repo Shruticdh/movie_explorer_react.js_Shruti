@@ -3,16 +3,15 @@ import { withNavigation } from '../utils/withNavigation';
 import { loginAPI } from '../Services/userServices';
 import toast from 'react-hot-toast';
 
-
-
 interface LoginPageState {
   email: string;
   password: string;
-  errors: Partial<Record<keyof Omit<LoginPageState, 'errors'>, string>>;
+  errors: Partial<Record<keyof Omit<LoginPageState, 'errors' | 'isLoading'>, string>>;
+  isLoading: boolean;
 }
 
 interface LoginPageProps {
-    navigate: (path: string) => void;
+  navigate: (path: string) => void;
 }
 
 class LoginPage extends Component<LoginPageProps, LoginPageState> {
@@ -21,7 +20,8 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
     this.state = {
       email: '',
       password: '',
-      errors: {}
+      errors: {},
+      isLoading: false,
     };
   }
 
@@ -36,29 +36,31 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
   validateFields = (): boolean => {
     const { email, password } = this.state;
     const errors: LoginPageState["errors"] = {};
-  
+
     if (!/\S+@\S+\.\S+/.test(email)) {
       errors.email = "Enter a valid email";
     }
-  
+
     if (password.length < 6) {
       errors.password = "Password must be at least 6 characters";
     }
-  
+
     this.setState({ errors });
-  
+
     return Object.keys(errors).length === 0;
   };
-  
+
   handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!this.validateFields()) return;
-  
+
+    this.setState({ isLoading: true });
+
     const { email, password } = this.state;
-  
+
     try {
       const user = await loginAPI({ email, password });
-  
+
       if (user?.token) {
         toast.success('Login successful!');
         localStorage.setItem("token", user.token);
@@ -70,17 +72,17 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
     } catch (error: any) {
       console.error('Login failed:', error);
       toast.error('Login failed: Something went wrong');
+    } finally {
+      this.setState({ isLoading: false });
     }
   };
-  
 
-
-    handleSignupClick = () => {
-        this.props.navigate('/signup');
-    };
+  handleSignupClick = () => {
+    this.props.navigate('/signup');
+  };
 
   render() {
-    const { email, password, errors } = this.state;
+    const { email, password, errors, isLoading } = this.state;
 
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-white bg-[url('./assets/background_Dark_signup.webp')] bg-cover bg-center px-4 relative">
@@ -123,6 +125,7 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
             <button
               type="submit"
               className="w-[50%] py-2 bg-red-800 text-white font-semibold rounded-full hover:bg-red-700 transition mx-auto block"
+              disabled={isLoading}
             >
               LOGIN
             </button>
@@ -131,12 +134,25 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
           <p className="text-center text-sm text-white mt-4">
             Don’t have an account?{' '}
             <button 
-            className="text-blue-500 hover:underline cursor-pointer"
-            onClick={this.handleSignupClick}
+              className="text-blue-500 hover:underline cursor-pointer"
+              onClick={this.handleSignupClick}
+              disabled={isLoading}
             >
-            Signup</button>
+              Signup
+            </button>
           </p>
         </div>
+
+        {isLoading && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50">
+            <div className="text-center">
+              <p className="text-center text-4xl text-white font-semibold mt-3">Wait For<div className="text-4xl text-center font-bold text-red-600 cursor-pointer">
+                M<span className="text-white text-4xl">OVIEXPO! Entry!</span>
+              </div></p>
+              <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mt-4"></div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

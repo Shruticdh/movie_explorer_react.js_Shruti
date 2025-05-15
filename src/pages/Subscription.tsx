@@ -17,13 +17,17 @@ const plans = [
       "720p streaming",
       "Ads supported",
     ],
+    goodies: [
+      "Embark on a 1-day movie marathon adventure!",
+      "Unlock a cinematic sprint with top trailers!",
+      "Dive into a quick reel of movie magic!",
+    ],
     buttonText: "Get started",
-    gradient: "from-gray-800 to-gray-900",
   },
   {
     title: "7_days",
     title2: "7 Days",
-    price: "Rs 399 ",
+    price: "Rs 399",
     features: [
       "Personal account, for daily use",
       "Unlimited access to all movies",
@@ -31,8 +35,12 @@ const plans = [
       "720p, 1080p & 4K streaming",
       "Lifetime access",
     ],
+    goodies: [
+      "Launch a week-long epic movie quest!",
+      "Stream blockbusters in stunning HD, ad-free!",
+      "Unleash 7 days of cinematic glory!",
+    ],
     buttonText: "Get started",
-    gradient: "from-red-900 to-pink-900",
   },
   {
     title: "1_month",
@@ -45,8 +53,12 @@ const plans = [
       "720p, 1080p & 4K streaming",
       "Lifetime access",
     ],
+    goodies: [
+      "Rule the cinematic universe for a month!",
+      "Stream in 4K with your movie squad!",
+      "Unlock a month of exclusive movie magic!",
+    ],
     buttonText: "Get started",
-    gradient: "from-purple-900 to-indigo-900",
   },
 ];
 
@@ -62,43 +74,48 @@ const textVariant = {
 const Subscription = () => {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedPlan) return alert("No plan selected");
+    if (!selectedPlan) {
+      toast.error("Please select a plan");
+      return;
+    }
 
+    setIsSubmitting(true);
     try {
       const checkoutUrl = await createSubscription(selectedPlan);
       if (checkoutUrl) {
-        window.location.href = checkoutUrl; 
+        window.location.href = checkoutUrl;
+      } else {
+        throw new Error("No checkout URL received");
       }
     } catch (err: any) {
-      toast.error(err.message || "Failed to subscribe.");
+      toast.error(err.message || "Failed to subscribe. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  // Find the selected plan's details
+  const selectedPlanDetails = plans.find((plan) => plan.title === selectedPlan);
+
+  // Format plan title for display
+  const formatPlanTitle = (title: string) =>
+    title.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
   return (
     <div className="bg-black text-white min-h-screen flex flex-col items-center px-6 py-10">
-      <motion.button
-        variants={textVariant}
-        className="flex items-center text-gray-300 mb-4 hover:text-white mb-10 relative z-[5] w-full"
-      >
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="flex items-center gap-2 bg-gradient-to-r from-gray-800 to-gray-900 text-white px-5 py-2 rounded-full hover:opacity-90 transition-all duration-300 text-sm sm:text-base"
-        >
-          <FiArrowLeft className="text-lg" />
-          Back to Home
-        </button>
-      </motion.button>
+
       <motion.h1
         custom={0}
         initial="hidden"
         animate="visible"
         variants={textVariant}
-        className="text-4xl font-bold mb-2 text-center"
+        className="text-3xl font-bold mb-2 text-center"
       >
-        Pay once, enjoy forever!
+        Unlock the Magic — One Spell, Endless Wonders!
       </motion.h1>
 
       <motion.p
@@ -108,7 +125,9 @@ const Subscription = () => {
         variants={textVariant}
         className="text-gray-400 text-center mb-7"
       >
-        No recurring fees. Pay once and unlock a lifetime of usage
+        Cast a one-time spell (payment) and enter a world of limitless
+        entertainment. <br />
+        <span>No monthly rituals, just pure cinematic enchantment—forever!</span>
       </motion.p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
@@ -118,7 +137,7 @@ const Subscription = () => {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: index * 0.3 }}
-            className={`bg-gradient-to-br from-gray-600 to-gray-900 p-6 rounded-2xl shadow-lg flex flex-col justify-between hover:scale-105 transition-transform duration-300 hover:shadow-xl hover:shadow-[gray]`}
+            className={`bg-gradient-to-br from-gray-600 to-gray-900  p-6 rounded-2xl shadow-lg flex flex-col justify-between hover:scale-105 transition-transform duration-300 hover:shadow-xl hover:shadow-gray-700`}
           >
             <div>
               <h2 className="text-2xl font-bold mb-4">{plan.title2}</h2>
@@ -134,7 +153,8 @@ const Subscription = () => {
             </div>
             <button
               onClick={() => setSelectedPlan(plan.title)}
-              className="bg-white text-black font-semibold py-2 px-4 rounded hover:bg-gray-800 transition"
+              className="bg-white text-black font-semibold py-2 px-4 rounded hover:bg-gray-300 transition"
+              aria-label={`Select ${plan.title2} plan`}
             >
               {plan.buttonText}
             </button>
@@ -146,21 +166,53 @@ const Subscription = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
           className="mt-10 w-full max-w-md bg-gray-800 p-6 rounded-lg shadow-md"
         >
           <h2 className="text-xl font-bold mb-4 text-white text-center">
-            Subscribe to {selectedPlan} Plan
+            You’re about to summon the{" "}
+            <span className="capitalize">{formatPlanTitle(selectedPlan)}</span>{" "}
+            Plan
           </h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <p className="text-2xl font-bold text-white text-center mb-4">
+            {selectedPlanDetails?.price}
+          </p>
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-white mb-2">
+              Your Cinematic Goodies:
+            </h3>
+            <ul className="space-y-2 text-sm text-gray-300">
+              {selectedPlanDetails?.goodies.map((goody, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <span className="text-red-500">🎬</span>
+                  <span>{goody}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <form onSubmit={handleSubmit} className="space-y-4" role="form" aria-label="Confirm subscription">
             <button
               type="submit"
-              className="w-full bg-white text-black py-2 rounded font-semibold hover:bg-gray-300"
+              disabled={isSubmitting}
+              className={`w-full py-2 rounded font-semibold transition ${
+                isSubmitting
+                  ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  : "bg-white text-black hover:bg-gray-300"
+              }`}
+              aria-label={isSubmitting ? "Processing subscription" : "Confirm subscription"}
+              aria-disabled={isSubmitting}
             >
-              Confirm Subscription
+              {isSubmitting ? "Processing..." : "Confirm Subscription"}
             </button>
+            {isSubmitting && (
+              <div className="flex justify-center mt-4">
+                <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
           </form>
         </motion.div>
       )}
+
       <motion.div
         custom={2}
         initial="hidden"
@@ -168,17 +220,17 @@ const Subscription = () => {
         variants={textVariant}
         className="mt-10 text-center"
       >
-        <h3 className="text-gray-400 text-sm mb-2">In great company</h3>
+        <h3 className="text-gray-400 text-sm mb-2">Joined by legendary guilds</h3>
         <p className="text-lg text-white">
-          Inbox is the go-to email platform for successful and renowned brands
+          Streamly is the enchanted gateway trusted by realms of dreamers and
+          doers alike.
         </p>
-        <div className="flex justify-center gap-8 mt-4 text-white-400 font-semibold">
-          <span>Shopify</span>
-          <span>Stripe</span>
-          <span>Cash App</span>
-          <span>Verizon</span>
+        <div className="flex justify-center gap-8 mt-4 text-gray-400 font-semibold">
+          <span>Hogwarts Studios</span>
+          <span>Middle Earth Films</span>
+          <span>Avengerverse</span>
+          <span>Wakanda+</span>
         </div>
-
       </motion.div>
     </div>
   );

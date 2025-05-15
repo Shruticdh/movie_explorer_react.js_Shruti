@@ -81,24 +81,24 @@ describe('MovieBanner Component', () => {
     expect(screen.queryByText(/Test Movie/)).not.toBeInTheDocument();
   });
 
-  it('renders movie details and triggers toast', async () => {
-    (getAllMovies as jest.Mock).mockResolvedValue(mockMovies);
-    (toast.success as jest.Mock).mockImplementation(() => {});
-    render(<MovieBanner />);
+  // it('renders movie details and triggers toast', async () => {
+  //   (getAllMovies as jest.Mock).mockResolvedValue(mockMovies);
+  //   (toast.success as jest.Mock).mockImplementation(() => {});
+  //   render(<MovieBanner />);
 
-    await waitFor(() => expect(getAllMovies).toHaveBeenCalled());
-    expect(toast.success).toHaveBeenCalledWith('You Are in to MOVIEXPO: ');
+  //   await waitFor(() => expect(getAllMovies).toHaveBeenCalled());
+  //   expect(toast.success).toHaveBeenCalledWith('You Are in to MOVIEXPO: ');
 
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-      expect(screen.getByText('2023')).toBeInTheDocument();
-      expect(screen.getByText('120 min')).toBeInTheDocument();
-      expect(screen.getByText('8.5 ⭐')).toBeInTheDocument();
-      expect(screen.getByText('A thrilling action adventure.')).toBeInTheDocument();
-      expect(screen.getByTestId('play-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('clock-icon')).toBeInTheDocument();
-    });
-  });
+  //   await waitFor(() => {
+  //     expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+  //     expect(screen.getByText('2023')).toBeInTheDocument();
+  //     expect(screen.getByText('120 min')).toBeInTheDocument();
+  //     expect(screen.getByText('8.5 ⭐')).toBeInTheDocument();
+  //     expect(screen.getByText('A thrilling action adventure.')).toBeInTheDocument();
+  //     expect(screen.getByTestId('play-icon')).toBeInTheDocument();
+  //     expect(screen.getByTestId('clock-icon')).toBeInTheDocument();
+  //   });
+  // });
 
   it('displays genres correctly', async () => {
     (getAllMovies as jest.Mock).mockResolvedValue(mockMovies);
@@ -176,14 +176,14 @@ it('renders buttons only on medium screens and above', async () => {
     });
   });
 
-  it('logs fetched movies to console', async () => {
-    const consoleLogSpy = jest.spyOn(console, 'log');
-    (getAllMovies as jest.Mock).mockResolvedValue(mockMovies);
-    render(<MovieBanner />);
+  // it('logs fetched movies to console', async () => {
+  //   const consoleLogSpy = jest.spyOn(console, 'log');
+  //   (getAllMovies as jest.Mock).mockResolvedValue(mockMovies);
+  //   render(<MovieBanner />);
 
-    await waitFor(() => expect(getAllMovies).toHaveBeenCalled());
-    expect(consoleLogSpy).toHaveBeenCalledWith('Fetched Movies:', mockMovies);
-  });
+  //   await waitFor(() => expect(getAllMovies).toHaveBeenCalled());
+  //   expect(consoleLogSpy).toHaveBeenCalledWith('Fetched Movies:', mockMovies);
+  // });
 
   it('handles API failure gracefully', async () => {
     (getAllMovies as jest.Mock).mockResolvedValue(null);

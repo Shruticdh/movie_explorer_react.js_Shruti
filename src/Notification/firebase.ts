@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { deleteToken, getMessaging, getToken, onMessage } from "firebase/messaging";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { sendTokenToBackend } from "../Services/userServices";
 
 const firebaseConfig = {
@@ -18,9 +18,7 @@ export const messaging = getMessaging(app);
 
 export const generateToken = async () => {
   try {
-    // Check if permission is already granted
     if (Notification.permission === "granted") {
-      // const vapidKey = "BB-kLe4vRvnBrHpgtnGuaVLdXTLRKbxJMmX3Ja7Tw92tW9NDKoGzQW1WXZDOII2ObL_bjPzBQvLOL9L6PnkbYxw";
       const vapidKey = "BPTOciy1kiAJiFGHaLpWnZrV58ZhCgRkGmVlh66WlZLoO1RaQibVb4CRNP4OeNCr7iNl17Awiynee1mEXbnl3XI";
 
       const token = await getToken(messaging, { vapidKey });
@@ -28,7 +26,7 @@ export const generateToken = async () => {
       if (token) {
         console.log("Existing FCM Token:", token);
         if (typeof token === "string" && token.length >= 50) {
-          // await sendTokenToBackend(token);
+          await sendTokenToBackend(token);
           return token;
         }
       }
@@ -44,7 +42,6 @@ export const generateToken = async () => {
     }
 
       const vapidKey = "BPTOciy1kiAJiFGHaLpWnZrV58ZhCgRkGmVlh66WlZLoO1RaQibVb4CRNP4OeNCr7iNl17Awiynee1mEXbnl3XI";
-      // const vapidKey = "BB-kLe4vRvnBrHpgtnGuaVLdXTLRKbxJMmX3Ja7Tw92tW9NDKoGzQW1WXZDOII2ObL_bjPzBQvLOL9L6PnkbYxw";
     const token = await getToken(messaging, { vapidKey });
     console.log("New FCM Token:", token);
 
@@ -53,7 +50,7 @@ export const generateToken = async () => {
       return null;
     }
 
-    await sendTokenToBackend(token);
+     sendTokenToBackend(token);
     console.log("Token sent to backend:", token);
     return token;
   } catch (error) {
@@ -64,7 +61,6 @@ export const generateToken = async () => {
 
 export const monitorToken = async () => {
   try {
-    // const vapidKey = "BB-kLe4vRvnBrHpgtnGuaVLdXTLRKbxJMmX3Ja7Tw92tW9NDKoGzQW1WXZDOII2ObL_bjPzBQvLOL9L6PnkbYxw";
     const vapidKey = "BPTOciy1kiAJiFGHaLpWnZrV58ZhCgRkGmVlh66WlZLoO1RaQibVb4CRNP4OeNCr7iNl17Awiynee1mEXbnl3XI";
     const token = await getToken(messaging, { vapidKey }).catch(async (error) => {
       if (
