@@ -190,9 +190,10 @@ const Header: React.FC = () => {
                 </div>
                 <hr className="my-2" />
                 <div className="flex flex-col space-y-2 text-sm">
-                  <span className="cursor-pointer hover:text-red-500">
-                    Billing Statement
-                  </span>
+                    <span className="cursor-pointer hover:text-red-500">
+                      Plan 
+                      : { plan }
+                    </span>
                   <button
                     className="cursor-pointer p-1 bg-red-600 border border-red-600 rounded-lg hover:text-white-500"
                     onClick={handleLogout}
