@@ -2,6 +2,7 @@ import React, { Component, ChangeEvent, FormEvent } from 'react';
 import { withNavigation } from '../utils/withNavigation';
 import { loginAPI } from '../Services/userServices';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 interface LoginPageState {
   email: string;
@@ -88,15 +89,61 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-white bg-[url('./assets/background_Dark_signup.webp')] bg-cover bg-center px-4 relative">
         <div className="absolute inset-0 bg-black/50 backdrop-blur-xs"></div>
 
-        <div className="bg-black/80 border border-black-800 rounded-tl-[4rem] rounded-tr-lg rounded-br-[4rem] rounded-bl-lg p-6 w-full max-w-[25rem] shadow-md z-10">
-          <h1 className="text-xl font-bold text-center text-white">Login</h1>
-          <p className="text-center text-lg text-white font-semibold mt-3">Welcome Back To<div className="text-lg text-center font-bold text-red-600 cursor-pointer">
-            M<span className="text-white">OVIEXPO!</span>
-          </div></p>
-          <p className="text-center text-sm text-white mb-6">Login to your Account</p>
+        <motion.div
+          className="bg-black/80 border border-black-800 rounded-tl-[4rem] rounded-tr-lg rounded-br-[4rem] rounded-bl-lg p-6 w-full max-w-[25rem] shadow-md z-10"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.h1
+            className="text-xl font-bold text-center text-white"
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
+            Login
+          </motion.h1>
 
-          <form onSubmit={this.handleSubmit} className="space-y-4" noValidate>
-            <div>
+          <motion.div
+            className="text-center text-lg text-white font-semibold mt-3"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+          >
+            Welcome Back To
+            <div className="text-lg text-center font-bold text-red-600 cursor-pointer">
+              M<span className="text-white">OVIEXPO!</span>
+            </div>
+          </motion.div>
+
+          <motion.p
+            className="text-center text-sm text-white mb-6"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.4 }}
+          >
+            Login to your Account
+          </motion.p>
+
+          <motion.form
+            onSubmit={this.handleSubmit}
+            className="space-y-4"
+            noValidate
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: {},
+              visible: {
+                transition: {
+                  staggerChildren: 0.2,
+                  delayChildren: 0.9,
+                },
+              },
+            }}
+          >
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            >
               <input
                 type="email"
                 name="email"
@@ -107,9 +154,11 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
                 className="w-full bg-white/90 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300"
               />
               {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-            </div>
+            </motion.div>
 
-            <div>
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            >
               <input
                 type="password"
                 name="password"
@@ -120,28 +169,34 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
                 className="w-full px-4 py-2 bg-white/90 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300"
               />
               {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-            </div>
+            </motion.div>
 
-            <button
+            <motion.button
               type="submit"
               className="w-[50%] py-2 bg-red-800 text-white font-semibold rounded-full hover:bg-red-700 transition mx-auto block"
               disabled={isLoading}
+              variants={{ hidden: { opacity: 0, scale: 0.8 }, visible: { opacity: 1, scale: 1 } }}
             >
               LOGIN
-            </button>
-          </form>
+            </motion.button>
+          </motion.form>
 
-          <p className="text-center text-sm text-white mt-4">
+          <motion.p
+            className="text-center text-sm text-white mt-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.6 }}
+          >
             Don’t have an account?{' '}
-            <button 
+            <button
               className="text-blue-500 hover:underline cursor-pointer"
               onClick={this.handleSignupClick}
               disabled={isLoading}
             >
               Signup
             </button>
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {isLoading && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50">
