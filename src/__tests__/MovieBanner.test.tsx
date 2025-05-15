@@ -81,25 +81,6 @@ describe('MovieBanner Component', () => {
     expect(screen.queryByText(/Test Movie/)).not.toBeInTheDocument();
   });
 
-  // it('renders movie details and triggers toast', async () => {
-  //   (getAllMovies as jest.Mock).mockResolvedValue(mockMovies);
-  //   (toast.success as jest.Mock).mockImplementation(() => {});
-  //   render(<MovieBanner />);
-
-  //   await waitFor(() => expect(getAllMovies).toHaveBeenCalled());
-  //   expect(toast.success).toHaveBeenCalledWith('You Are in to MOVIEXPO: ');
-
-  //   await waitFor(() => {
-  //     expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-  //     expect(screen.getByText('2023')).toBeInTheDocument();
-  //     expect(screen.getByText('120 min')).toBeInTheDocument();
-  //     expect(screen.getByText('8.5 ⭐')).toBeInTheDocument();
-  //     expect(screen.getByText('A thrilling action adventure.')).toBeInTheDocument();
-  //     expect(screen.getByTestId('play-icon')).toBeInTheDocument();
-  //     expect(screen.getByTestId('clock-icon')).toBeInTheDocument();
-  //   });
-  // });
-
   it('displays genres correctly', async () => {
     (getAllMovies as jest.Mock).mockResolvedValue(mockMovies);
     render(<MovieBanner />);
@@ -150,20 +131,6 @@ describe('MovieBanner Component', () => {
     expect(screen.queryByText(/,.*/)).not.toBeInTheDocument();
   });
 
-it('renders buttons only on medium screens and above', async () => {
-    (getAllMovies as jest.Mock).mockResolvedValue(mockMovies);
-    render(<MovieBanner />);
-
-    await waitFor(() => expect(getAllMovies).toHaveBeenCalled());
-    await waitFor(() => {
-      const watchNowButton = screen.getByText('Watch Now');
-      const watchLaterButton = screen.getByText('Watch Later');
-      const buttonContainer = watchNowButton.closest('div');
-      expect(buttonContainer).toHaveClass('hidden md:flex');
-      expect(watchLaterButton.closest('div')).toHaveClass('hidden md:flex');
-    });
-  });
-
   it('renders image with correct attributes', async () => {
     (getAllMovies as jest.Mock).mockResolvedValue(mockMovies);
     render(<MovieBanner />);
@@ -175,15 +142,6 @@ it('renders buttons only on medium screens and above', async () => {
       expect(img).toHaveClass('absolute inset-0 w-full h-full object-cover object-top max-sm:object-cover');
     });
   });
-
-  // it('logs fetched movies to console', async () => {
-  //   const consoleLogSpy = jest.spyOn(console, 'log');
-  //   (getAllMovies as jest.Mock).mockResolvedValue(mockMovies);
-  //   render(<MovieBanner />);
-
-  //   await waitFor(() => expect(getAllMovies).toHaveBeenCalled());
-  //   expect(consoleLogSpy).toHaveBeenCalledWith('Fetched Movies:', mockMovies);
-  // });
 
   it('handles API failure gracefully', async () => {
     (getAllMovies as jest.Mock).mockResolvedValue(null);

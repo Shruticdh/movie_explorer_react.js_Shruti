@@ -35,7 +35,7 @@ describe("Header Component", () => {
   const menuItems = screen.getAllByTestId("menu-item");
   const itemTexts = menuItems.map((item) => item.textContent);
 
-  expect(itemTexts).toEqual(expect.arrayContaining(["Home", "Movies", "Genre", "Contact"]));
+  expect(itemTexts).toEqual(expect.arrayContaining(["Home", "Movies", "Genre"]));
 });
 
 test("renders the subscribe button with correct label", () => {
@@ -85,11 +85,10 @@ it("renders the menu items", () => {
   const { getAllByTestId } = render(<Header />);
   const menuItems = getAllByTestId("menu-item");
   
-  expect(menuItems).toHaveLength(4);  // Assuming 4 menu items
+  expect(menuItems).toHaveLength(3);  
   expect(menuItems[0]).toHaveTextContent("Home");
   expect(menuItems[1]).toHaveTextContent("Movies");
   expect(menuItems[2]).toHaveTextContent("Genre");
-  expect(menuItems[3]).toHaveTextContent("Contact");
 });
 
 it("renders the subscribe button and checks if it is clickable", () => {

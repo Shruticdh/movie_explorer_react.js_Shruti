@@ -190,7 +190,7 @@ const Subscription = () => {
               ))}
             </ul>
           </div>
-          <form onSubmit={handleSubmit} className="space-y-4" role="form" aria-label="Confirm subscription">
+          <form onSubmit={handleSubmit}  className="space-y-4" role="form"  aria-label="subscription form" >
             <button
               type="submit"
               disabled={isSubmitting}

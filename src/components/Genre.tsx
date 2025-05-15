@@ -1,5 +1,13 @@
 import React from "react";
 import { motion } from "framer-motion";
+import Img from "../assets/Avatar2.jpg";
+import Img2 from "../assets/Interseller.jpg";
+import Img3 from "../assets/FatherBanner.jpg" ;
+import Img4 from "../assets/LoveBanner3.jpg";
+import Img5 from  "../assets/DuneTwoBanner.jpg" ;
+import Img6 from  "../assets/ConjuringBanner.jpg" ;
+import Img7 from  "../assets/DarkKnight.jpg";
+import Img8 from "../assets/BoothBanner3.jpg" ;
 
 interface Genre {
   name: string;
@@ -11,14 +19,14 @@ interface GenreProps {
 }
 
 const genres: Genre[] = [
-  { name: "Fantasy", imageUrl: "src/assets/Avatar2.jpg" },
-  { name: "Sci-fi", imageUrl: "src/assets/Interseller.jpg" },
-  { name: "Drama", imageUrl: "src/assets/FatherBanner.jpg" },
-  { name: "Romance", imageUrl: "src/assets/LoveBanner3.jpg" },
-  { name: "Action", imageUrl: "src/assets/DuneTwoBanner.jpg" },
-  { name: "Horror", imageUrl: "src/assets/ConjuringBanner.jpg" },
-  { name: "Adventure", imageUrl: "src/assets/DarkKnight.jpg" },
-  { name: "Comedy", imageUrl: "src/assets/BoothBanner3.jpg" },
+  { name: "Fantasy", imageUrl: Img },
+  { name: "Sci-fi", imageUrl: Img2 },
+  { name: "Drama", imageUrl: Img3 },
+  { name: "Romance", imageUrl: Img4 },
+  { name: "Action", imageUrl: Img5 },
+  { name: "Horror", imageUrl: Img6 },
+  { name: "Adventure", imageUrl: Img7 },
+  { name: "Comedy", imageUrl: Img8 },
 ];
 
 const containerVariants = {

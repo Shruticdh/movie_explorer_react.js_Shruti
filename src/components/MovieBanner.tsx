@@ -50,7 +50,7 @@ const MovieBanner: React.FC = () => {
         }
       } catch (error) {
         console.error("Failed to fetch movies:", error);
-        toast.error("Failed to load movies");
+        // toast.error("Failed to load movies");
       } finally {
         setIsLoading(false);
       }

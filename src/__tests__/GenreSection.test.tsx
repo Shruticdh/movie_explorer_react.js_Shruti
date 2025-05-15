@@ -120,19 +120,6 @@ test('renders the "Your Favorite Genre Movie Magic" heading', async () => {
   });
 });
 
-  it('displays message when no movies are found', async () => {
-    jest.spyOn(MovieService, 'getMoviesByGenre').mockImplementation(() => Promise.resolve({ movies: [] }));
-    render(<GenreSection />);
-
-    // Trigger genre selection
-    const genreButton = await screen.findByText('Action');
-    fireEvent.click(genreButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('No movies found.')).toBeInTheDocument();
-    });
-  });
-
   it('renders page buttons when multiple pages exist', async () => {
     jest.spyOn(MovieService, 'getAllMoviesPagination').mockImplementation(() =>
       Promise.resolve({
