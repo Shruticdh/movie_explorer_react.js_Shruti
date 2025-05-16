@@ -55,7 +55,7 @@ const RoutingModule: React.FC = () => {
       <Routes>
         <Route path="/" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
-        <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}></Route>
         <Route path="/subscription" element={<SubscriptionPage />}></Route>
         <Route path="/movie-details/:id" element={<MovieDetail />}></Route>
         <Route path="/add-movie" element={<MovieForm />}></Route>
