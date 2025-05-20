@@ -1,6 +1,7 @@
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { Movie } from '@mui/icons-material';
+import { Console } from 'console';
 
 const BASE_URL = 'https://movie-explorer-ror-ashutosh-singh.onrender.com'; 
 
@@ -51,11 +52,10 @@ interface Movie {
         },
       };
   
-      // toast.success('Fetched movies:');
       return movieData;
   
     } catch (error: any) {
-      toast.error('Error fetching movies:', error.message);
+      console.error('Error fetching movies:', error.message);
       return {
         movies: [],
         pagination: {
@@ -78,10 +78,9 @@ interface Movie {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      // toast.success('Fetched movie');
       return response.data.movies || [];
     } catch (error: any) {
-      toast.error('Error searching movies:', error.message);
+      console.error('Error searching movies:', error.message);
       return [];
     }
   };
@@ -98,13 +97,11 @@ interface Movie {
                 }
             });
 
-            // console.log('API Response:', response.data);
             const movies : Movie[] = response.data.movies;
-            // toast.success("fetched movies from the api");
             return movies;
     }
     catch(error : any){
-        toast.error("error fetching movies", error.message);
+        console.error("Error fetching movies", error.message);
     }
 }
 
@@ -119,10 +116,9 @@ export const getMoviesById = async (id: number) => {
         },
       });
       const movie: Movie = await response.data;       
-      // toast.success('Fetched movie by ID');
       return movie;
     } catch (error: any) {
-      toast.error(`Error fetching movie with ID ${id}: ${error}`);
+      console.error(`Error fetching movie with ID ${id}: ${error}`);
       return null;
     }
   };
@@ -139,7 +135,7 @@ export const getMoviesById = async (id: number) => {
       });
       return response.data;
     } catch (error) {
-      toast.error("Error fetching movies by genre:", error.message);
+      console.error("Error fetching movies ", error.message);
       return { movies: [] };
     }
   };

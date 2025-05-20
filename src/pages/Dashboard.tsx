@@ -46,8 +46,8 @@ const Dashboard: React.FC = () => {
         </FadeInSection>
 
         <FadeInSection>
-          <div className="bg-black px-6 py-8 md:px-16 text-white">
-            <div className="flex justify-between items-center mb-6">
+          <div className="bg-black px-6 py-8 md:px-16 text-white ">
+            <div className="flex justify-between items-center mb-6 ">
               <h2 className="text-white text-2xl font-semibold flex items-center gap-2">
                 <span className="text-red-600">▣</span> Genres
               </h2>
@@ -59,15 +59,18 @@ const Dashboard: React.FC = () => {
               </button>
             </div>
           </div>
-          <Genre
-            onGenreClick={(genre: string) => {
-            }}
-          />
+          <div style={{ marginBottom: "5rem" }}
+          onClick={handleGenreClick}>
+            <Genre
+              onGenreClick={(genre: string) => {
+              }}
+            />
+          </div>
         </FadeInSection>
 
-        <FadeInSection>
-          <Subscription />
-        </FadeInSection>
+  <FadeInSection>
+    <Subscription />
+  </FadeInSection>
       </main>
       <Footer />
     </div>

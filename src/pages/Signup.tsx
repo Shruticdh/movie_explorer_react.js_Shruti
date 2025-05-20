@@ -80,8 +80,9 @@ class Signup extends Component<SignupPageProps, SignupState> {
     try {
       const userData = { name, mobile_number: mobile, email, password };
       const response = await signup(userData);
-      toast.success('Signup successful! Please login.');
+      if(response) {
       this.props.navigate('/');
+      }
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Signup failed. Please try again.';
       toast.error(errorMessage);

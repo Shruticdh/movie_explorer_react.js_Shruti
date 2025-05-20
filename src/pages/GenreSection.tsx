@@ -6,6 +6,7 @@ import { getAllMoviesPagination, getMoviesByGenre } from '../Services/MovieServi
 import MovieCard from '../components/MovieCard';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { useSearchParams } from 'react-router-dom';
 
 interface Movie {
   id: number;
@@ -23,6 +24,19 @@ const GenreSection: React.FC = () => {
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Initialize currentPage from URL query parameter
+  useEffect(() => {
+    const pageFromUrl = searchParams.get('page');
+    const pageNum = pageFromUrl ? parseInt(pageFromUrl, 10) : 1;
+    if (!isNaN(pageNum) && pageNum > 0) {
+      setCurrentPage(pageNum);
+    } else {
+      setCurrentPage(1);
+      setSearchParams({ page: '1' });
+    }
+  }, [searchParams, setSearchParams]);
 
   const fetchMovies = async (page: number) => {
     try {
@@ -56,6 +70,9 @@ const GenreSection: React.FC = () => {
       if (movieData.movies && movieData.movies.length > 0) {
         setMovies(movieData.movies);
         setSelectedGenre(genre);
+        // Reset page to 1 and remove page param when selecting a genre
+        setCurrentPage(1);
+        setSearchParams({});
       } else {
         setMovies([]);
         setSelectedGenre(genre);
@@ -71,8 +88,12 @@ const GenreSection: React.FC = () => {
   };
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    setSelectedGenre(null);
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      setSelectedGenre(null);
+      // Update URL with new page number
+      setSearchParams({ page: page.toString() });
+    }
   };
 
   useEffect(() => {
@@ -110,7 +131,7 @@ const GenreSection: React.FC = () => {
 
         <Genre onGenreClick={handleGenreClick} />
 
-        <div className="bg-black text-white w-full flex flex-col justify sensacióncenter items-center z-10 mt-3">
+        <div className="bg-black text-white w-full flex flex-col justify-center items-center z-10 mt-3">
           <h1 className="text-3xl font-bold mb-5">
             Your Favorite Genre Movie <span className="text-red-500">Magic</span>
           </h1>
@@ -155,7 +176,7 @@ const GenreSection: React.FC = () => {
                 className={`px-4 py-2 rounded ${
                   currentPage === 1
                     ? 'bg-gray-500 cursor-not-allowed'
-                    : 'bg-red-600 hover:bg-red-700'
+                    : 'bg-red-600 hover:bg-red-700 cursor-pointer'
                 } text-white`}
               >
                 Previous
@@ -165,7 +186,7 @@ const GenreSection: React.FC = () => {
                 <button
                   key={page}
                   onClick={() => handlePageChange(page)}
-                  className={`px-4 py-2 rounded ${
+                  className={`cursor-pointer px-4 py-2 rounded ${
                     page === currentPage
                       ? 'bg-red-500 text-white'
                       : 'bg-gray-700 text-white'
@@ -181,7 +202,7 @@ const GenreSection: React.FC = () => {
                 className={`px-4 py-2 rounded ${
                   currentPage === totalPages
                     ? 'bg-gray-500 cursor-not-allowed'
-                    : 'bg-red-600 hover:bg-red-700'
+                    : 'bg-red-600 hover:bg-red-700 cursor-pointer'
                 } text-white`}
               >
                 Next

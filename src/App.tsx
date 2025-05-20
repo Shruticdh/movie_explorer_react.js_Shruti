@@ -2,13 +2,19 @@ import React, { useEffect } from "react";
 import RoutingModule from "./routingModule/routingModule";
 import { generateToken, messaging } from "./Notification/firebase";
 import { onMessage } from "firebase/messaging";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 const App: React.FC = () => {
   useEffect(() => {
     generateToken();
     onMessage(messaging, (payload) => {
       console.log("Foreground message received:", payload);
+      const { title, body } = payload.notification || {};
+
+    if (title && body) {
+      toast(`${title}: ${body}`);
+    }
+
     });
   }, []);
 

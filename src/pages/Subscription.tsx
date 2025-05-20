@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { FiArrowLeft } from "react-icons/fi";
 import { createSubscription } from "../Services/SubscriptionService";
 import toast from "react-hot-toast";
 
@@ -75,6 +74,25 @@ const Subscription = () => {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
+
+  const fetchUserPlan = async () => {
+    const plan = localStorage.getItem("userPlan");
+    return plan || "basic"; 
+  };
+
+  const handlePlanSelect = async (planTitle: string) => {
+    const userPlan = await fetchUserPlan();
+    if (userPlan === "premium") {
+      setIsPremium(true); 
+    } else {
+      setSelectedPlan(planTitle); 
+    }
+  };
+
+  const handleGoBack = () => {
+    navigate("/"); 
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,18 +116,15 @@ const Subscription = () => {
     }
   };
 
-  // Find the selected plan's details
   const selectedPlanDetails = plans.find((plan) => plan.title === selectedPlan);
 
-  // Format plan title for display
   const formatPlanTitle = (title: string) =>
     title.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
   return (
-    <div className="bg-black text-white min-h-screen flex flex-col items-center px-6 py-10">
-
+    <div className="bg-black text-white flex flex-col items-center px-4 py-6 sm:px-6 sm:py-8">
       <motion.h1
-        custom={0}
+        custom={1}
         initial="hidden"
         animate="visible"
         variants={textVariant}
@@ -130,7 +145,7 @@ const Subscription = () => {
         <span>No monthly rituals, just pure cinematic enchantment—forever!</span>
       </motion.p>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl cursor-pointer">
         {plans.map((plan, index) => (
           <motion.div
             key={index}
@@ -151,13 +166,18 @@ const Subscription = () => {
                 ))}
               </ul>
             </div>
-            <button
-              onClick={() => setSelectedPlan(plan.title)}
-              className="bg-white text-black font-semibold py-2 px-4 rounded hover:bg-gray-300 transition"
-              aria-label={`Select ${plan.title2} plan`}
-            >
-              {plan.buttonText}
-            </button>
+           <button
+                onClick={() => handlePlanSelect(plan.title)} 
+                disabled={isPremium} 
+                className={`font-semibold py-2 px-4 rounded transition ${
+                  isPremium
+                    ? "bg-gray-600 text-gray-400 cursor-not-allowed cursor-pointer"
+                    : "bg-white text-black hover:bg-gray-300 cursor-pointer"
+                }`}
+                aria-label={`Select ${plan.title2} plan`}
+              >
+                {plan.buttonText}
+              </button>
           </motion.div>
         ))}
       </div>
@@ -167,7 +187,7 @@ const Subscription = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mt-10 w-full max-w-md bg-gray-800 p-6 rounded-lg shadow-md"
+          className="mt-10 w-full max-w-md bg-gray-800 p-6 rounded-lg shadow-md cursor-pointer"
         >
           <h2 className="text-xl font-bold mb-4 text-white text-center">
             You’re about to summon the{" "}
@@ -196,8 +216,8 @@ const Subscription = () => {
               disabled={isSubmitting}
               className={`w-full py-2 rounded font-semibold transition ${
                 isSubmitting
-                  ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                  : "bg-white text-black hover:bg-gray-300"
+                  ? "bg-gray-600 text-gray-400 cursor-not-allowed cursor-pointer"
+                  : "bg-white text-black hover:bg-gray-300 cursor-pointer"
               }`}
               aria-label={isSubmitting ? "Processing subscription" : "Confirm subscription"}
               aria-disabled={isSubmitting}
@@ -206,7 +226,7 @@ const Subscription = () => {
             </button>
             {isSubmitting && (
               <div className="flex justify-center mt-4">
-                <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin cursor-pointer"></div>
               </div>
             )}
           </form>
@@ -221,18 +241,38 @@ const Subscription = () => {
         className="mt-10 text-center"
       >
         <h3 className="text-gray-400 text-sm mb-2">Joined by legendary guilds</h3>
-        <p className="text-lg text-white">
+        <p className=" text-xs md:text-lg text-white text-center">
           Streamly is the enchanted gateway trusted by realms of dreamers and
           doers alike.
         </p>
-        <div className="flex justify-center gap-8 mt-4 text-gray-400 font-semibold">
+        <div className="flex justify-center text-xs md:text-lg gap-8 mt-4 text-gray-400 font-semibold text-center">
           <span>Hogwarts Studios</span>
           <span>Middle Earth Films</span>
           <span>Avengerverse</span>
           <span>Wakanda+</span>
         </div>
       </motion.div>
-    </div>
+
+      {isPremium && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className=" bg-opacity-80 p-6 rounded-lg shadow-lg text-center ">
+            <h2 className="text-4xl font-bold text-white mb-4">
+              You Are Already <span className="text-red-600">Premium </span>user of{" "}<br></br>
+                   <span className="text-red-600">M</span><span className="text-white text-4xl">OVIEXPO!!!</span>
+            </h2>
+            <button
+              onClick={handleGoBack}
+              className="mt-5 bg-red-700 text-white font-semibold py-2 px-4 rounded hover:bg-red-800 transition"
+              aria-label="Go back to home"
+            >
+              Go back to home
+            </button>
+          </div>
+        </div>
+        </div>
+      )} 
+      </div>
   );
 };
 

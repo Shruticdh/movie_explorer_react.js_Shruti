@@ -32,7 +32,7 @@ const AllMovies: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, 500);
+    }, 400);
 
     return () => clearTimeout(timer);
   }, [searchTerm]);
@@ -62,7 +62,6 @@ const AllMovies: React.FC = () => {
     } catch (error: any) {
       console.error('Fetch error:', error.message);
       setMovies([]);
-      toast.error('Failed to load movies');
     } finally {
       setIsLoading(false);
     }
@@ -141,7 +140,7 @@ const AllMovies: React.FC = () => {
             <button
               onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
               disabled={currentPage === 1}
-              className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-500 text-gray-300 cursor-not-allowed' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+              className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-500 text-gray-300 cursor-not-allowed' : 'bg-red-700 text-gray-200 hover:bg-red-600 cursor-pointer'}`}
             >
               Previous
             </button>
@@ -150,7 +149,7 @@ const AllMovies: React.FC = () => {
               <button
                 key={i}
                 onClick={() => handlePageChange(i + 1)}
-                className={`px-3 py-1 rounded ${currentPage === i + 1 ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                className={`cursor-pointer px-3 py-1 rounded ${currentPage === i + 1 ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
               >
                 {i + 1}
               </button>
@@ -159,7 +158,7 @@ const AllMovies: React.FC = () => {
             <button
               onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-500 text-gray-300 cursor-not-allowed' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+              className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-500 text-gray-300 cursor-not-allowed' : 'bg-red-700 text-gray-200 hover:bg-red-600 cursor-pointer'}`}
             >
               Next
             </button>

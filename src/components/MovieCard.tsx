@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Pencil, Trash2, Crown } from "lucide-react";
 import { deleteMovie } from "../Services/AdminServices";
 import { toast } from "react-toastify";
-import { Movie } from "@mui/icons-material";
 
 interface SimpleMovieCardProps {
   id: string;
@@ -120,3 +119,6 @@ const MovieCard: React.FC<SimpleMovieCardProps> = ({
 };
 
 export default MovieCard;
+
+
+

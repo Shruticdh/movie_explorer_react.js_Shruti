@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { getAllMovies } from '../Services/MovieService';
+import { getAllMovies, getMoviesByGenre } from '../Services/MovieService';
 import { useNavigate } from 'react-router-dom';
 import MovieCard from './MovieCard';
 import { motion, useInView } from 'framer-motion';
@@ -13,6 +13,16 @@ interface Movie {
   is_premium: boolean;
   genre: string;
 }
+interface MovieResponse {
+  movies: Movie[];
+  pagination: {
+    total_pages: number;
+    current_page: number;
+    per_page: number;
+    total_count: number;
+  };
+}
+
 
 const MovieCarousel: React.FC = () => {
   const [featured, setFeatured] = useState<Movie[]>([]);
@@ -27,15 +37,49 @@ const MovieCarousel: React.FC = () => {
   const popularInView = useInView(popularRef, { once: true });
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    setRole(user?.role);
-    getAllMovies().then((movies) => {
-      if (movies) {
+  const fetchData = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      setRole(user?.role || "");
+      console.log("User role:", user?.role);
+    } catch (error) {
+      console.error("Error parsing user from localStorage:", error);
+      setRole("");
+    }
+
+    try {
+      const response = await getAllMovies();
+      console.log("All movies:", response);
+      const movies = response?.movies || response;
+      if (movies && Array.isArray(movies)) {
         setFeatured(movies.slice(0, 10));
-        setPopular(movies.filter((m: Movie) => m.rating >= 8).slice(0, 10));
+      } else {
+        console.warn("No valid movies data:", movies);
+        setFeatured([]);
       }
-    });
-  }, []);
+    } catch (error) {
+      console.error("Error fetching all movies:", error);
+      setFeatured([]);
+    }
+
+    try {
+      const response = await getMoviesByGenre("Romance");
+      console.log("Action movies:", response);
+      const movies = response?.movies || response;
+      if (movies && Array.isArray(movies)) {
+        setPopular(movies.slice(0, 10));
+      } else {
+        console.warn("No valid action movies data:", movies);
+        setPopular([]);
+      }
+    } catch (error) {
+      console.error("Error fetching action movies:", error);
+      setPopular([]);
+    }
+  };
+
+  fetchData();
+}, []);
    const handleClick = () =>{
     navigate('/all-movies')
    }

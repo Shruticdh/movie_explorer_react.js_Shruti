@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAllMovies } from "../Services/MovieService";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 interface Movie {
   id: number;
@@ -38,6 +39,48 @@ const MovieBanner: React.FC = () => {
   const [currentMovieIndex, setCurrentMovieIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
+    const navigate = useNavigate();
+  const userPlan = localStorage.getItem("userPlan");
+
+  const handlePremiumAccess = () => {
+    if (currentMovie.is_premium) {
+      handlePremiumAccess();
+    } else {
+      handleNonPremiumAccess();
+    }
+  };
+
+  const handleNonPremiumAccess = () => {
+    navigate(`/movie-details/${currentMovie.id}`, {
+      state: {
+        id: currentMovie.id,
+        title: currentMovie.title,
+        imageUrl: currentMovie.poster_url,
+        duration: currentMovie.duration,
+        genre: currentMovie.genre,
+        quality: currentMovie.is_premium ? "HD" : "SD"
+      },
+    });
+  };
+
+   const handleClick = () => {
+    const role = localStorage.getItem("role");
+    if (!currentMovie.is_premium || userPlan === "premium" || role === "supervisor" ) {
+      navigate(`/movie-details/${currentMovie.id}`, {
+        state: { 
+          id: currentMovie.id, 
+          title: currentMovie.title, 
+          imageUrl: currentMovie.poster_url, 
+          duration: currentMovie.duration, 
+          genre: currentMovie.genre, 
+          quality: currentMovie.is_premium ? "HD" : "SD" 
+        },
+      });
+    } else {
+      navigate("/subscription");
+    }
+  };
+
   useEffect(() => {
     const fetchMovies = async () => {
       try {
@@ -46,11 +89,10 @@ const MovieBanner: React.FC = () => {
         if (allMovies && allMovies.length > 0) {
           setMovies(allMovies);
         } else {
-          toast.error("No movies available");
+          console.error("No movies available");
         }
       } catch (error) {
         console.error("Failed to fetch movies:", error);
-        // toast.error("Failed to load movies");
       } finally {
         setIsLoading(false);
       }
@@ -62,7 +104,6 @@ const MovieBanner: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentMovieIndex((prev) => {
-        console.log("movies length", movies.length);
         if (movies.length === 0) return 0;
         return (prev + 1) % movies.length;
       });
@@ -87,7 +128,9 @@ const MovieBanner: React.FC = () => {
   if (!currentMovie) return null;
 
   return (
-    <section className="relative h-[600px] md:w-full text-white overflow-hidden">
+    <section className="relative h-[600px] md:w-full text-white overflow-hidden cursor-pointer"
+     onClick={handleClick}>
+      
       <AnimatePresence mode="wait">
         <motion.img
           key={currentMovie.banner_url}

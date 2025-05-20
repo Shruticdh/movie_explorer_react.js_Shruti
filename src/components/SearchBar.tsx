@@ -18,7 +18,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, setSearchTerm }) => {
           className="w-full px-4 py-2 text-white bg-[#1a1a1a] focus:outline-none placeholder-gray-400"
         />
         <button className="p-3 bg-red-700 hover:bg-red-800 transition duration-200">
-          <FaSearch className="text-white" />
+          <FaSearch className="text-white cursor-pointer" />
         </button>
       </div>
     </div>
