@@ -3,12 +3,14 @@ import { withNavigation } from '../utils/withNavigation';
 import { loginAPI } from '../Services/userServices';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import { FiEye, FiEyeOff } from 'react-icons/fi'; 
 
 interface LoginPageState {
   email: string;
   password: string;
-  errors: Partial<Record<keyof Omit<LoginPageState, 'errors' | 'isLoading'>, string>>;
+  errors: Partial<Record<keyof Omit<LoginPageState, 'errors' | 'isLoading' | 'showPassword'>, string>>;
   isLoading: boolean;
+  showPassword: boolean; 
 }
 
 interface LoginPageProps {
@@ -23,6 +25,7 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
       password: '',
       errors: {},
       isLoading: false,
+      showPassword: false, 
     };
   }
 
@@ -31,6 +34,12 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
     this.setState((prevState) => ({
       ...prevState,
       [name]: value,
+    }));
+  };
+
+  toggleShowPassword = () => {
+    this.setState((prevState) => ({
+      showPassword: !prevState.showPassword,
     }));
   };
 
@@ -83,7 +92,7 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
   };
 
   render() {
-    const { email, password, errors, isLoading } = this.state;
+    const { email, password, errors, isLoading, showPassword } = this.state;
 
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-white bg-[url('./assets/background_Dark_signup.webp')] bg-cover bg-center px-4 relative">
@@ -159,15 +168,24 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
             <motion.div
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
             >
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                value={password}
-                autoComplete="off"
-                onChange={this.handleChange}
-                className="w-full px-4 py-2 bg-white/90 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  autoComplete="off"
+                  onChange={this.handleChange}
+                  className="w-full px-4 py-2 bg-white/90 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={this.toggleShowPassword}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800"
+                >
+                  {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+                </button>
+              </div>
               {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
             </motion.div>
 

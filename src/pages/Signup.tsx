@@ -3,6 +3,7 @@ import { withNavigation } from '../utils/withNavigation';
 import { signup } from '../Services/userServices';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import { FiEye, FiEyeOff } from 'react-icons/fi'; 
 
 interface SignupState {
   name: string;
@@ -10,11 +11,13 @@ interface SignupState {
   email: string;
   password: string;
   confirmPassword: string;
-  errors: Partial<Record<keyof Omit<SignupState, 'errors'>, string>>;
+  errors: Partial<Record<keyof Omit<SignupState, 'errors' | 'showPassword' | 'showConfirmPassword'>, string>>;
+  showPassword: boolean; 
+  showConfirmPassword: boolean; 
 }
 
 interface SignupPageProps {
-  navigate: (path: string) => void;
+  navigate: (path: string) => schaute
 }
 
 class Signup extends Component<SignupPageProps, SignupState> {
@@ -27,6 +30,8 @@ class Signup extends Component<SignupPageProps, SignupState> {
       password: '',
       confirmPassword: '',
       errors: {},
+      showPassword: false, 
+      showConfirmPassword: false, 
     };
   }
 
@@ -38,12 +43,24 @@ class Signup extends Component<SignupPageProps, SignupState> {
         [name]: value,
       }),
       () => {
-        this.validateField(name as keyof Omit<SignupState, 'errors'>, value);
+        this.validateField(name as keyof Omit<SignupState, 'errors' | 'showPassword' | 'showConfirmPassword'>, value);
       }
     );
   };
 
-  validateField = (field: keyof Omit<SignupState, 'errors'>, value: string) => {
+  toggleShowPassword = () => {
+    this.setState((prevState) => ({
+      showPassword: !prevState.showPassword,
+    }));
+  };
+
+  toggleShowConfirmPassword = () => {
+    this.setState((prevState) => ({
+      showConfirmPassword: !prevState.showConfirmPassword,
+    }));
+  };
+
+  validateField = (field: keyof Omit<SignupState, 'errors' | 'showPassword' | 'showConfirmPassword'>, value: string) => {
     const errors = { ...this.state.errors };
 
     switch (field) {
@@ -70,7 +87,7 @@ class Signup extends Component<SignupPageProps, SignupState> {
   handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { name, mobile, email, password } = this.state;
-    const fields: (keyof Omit<SignupState, 'errors'>)[] = ['name', 'mobile', 'email', 'password', 'confirmPassword'];
+    const fields: (keyof Omit<SignupState, 'errors' | 'showPassword' | 'showConfirmPassword'>)[] = ['name', 'mobile', 'email', 'password', 'confirmPassword'];
 
     fields.forEach((field) => this.validateField(field, this.state[field]));
 
@@ -80,8 +97,8 @@ class Signup extends Component<SignupPageProps, SignupState> {
     try {
       const userData = { name, mobile_number: mobile, email, password };
       const response = await signup(userData);
-      if(response) {
-      this.props.navigate('/');
+      if (response) {
+        this.props.navigate('/');
       }
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Signup failed. Please try again.';
@@ -94,7 +111,7 @@ class Signup extends Component<SignupPageProps, SignupState> {
   };
 
   render() {
-    const { name, mobile, email, password, confirmPassword, errors } = this.state;
+    const { name, mobile, email, password, confirmPassword, errors, showPassword, showConfirmPassword } = this.state;
 
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-white bg-[url('./assets/background_Dark_signup.webp')] bg-cover bg-center px-4 relative">
@@ -145,25 +162,43 @@ class Signup extends Component<SignupPageProps, SignupState> {
               {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
             <div>
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={this.handleChange}
-                className="w-full px-4 py-2 bg-white/90 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={this.handleChange}
+                  className="w-full px-4 py-2 bg-white/90 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={this.toggleShowPassword}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800"
+                >
+                  {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+                </button>
+              </div>
               {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
             </div>
             <div>
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm your password"
-                value={confirmPassword}
-                onChange={this.handleChange}
-                className="w-full px-4 py-2 bg-white/90 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300"
-              />
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  name="confirmPassword"
+                  placeholder="Confirm your password"
+                  value={confirmPassword}
+                  onChange={this.handleChange}
+                  className="w-full px-4 py-2 bg-white/90 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={this.toggleShowConfirmPassword}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800"
+                >
+                  {showConfirmPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+                </button>
+              </div>
               {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
             </div>
 
