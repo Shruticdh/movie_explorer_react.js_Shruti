@@ -3,7 +3,7 @@ import { withNavigation } from '../utils/withNavigation';
 import { signup } from '../Services/userServices';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { FiEye, FiEyeOff } from 'react-icons/fi'; 
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 interface SignupState {
   name: string;
@@ -12,12 +12,12 @@ interface SignupState {
   password: string;
   confirmPassword: string;
   errors: Partial<Record<keyof Omit<SignupState, 'errors' | 'showPassword' | 'showConfirmPassword'>, string>>;
-  showPassword: boolean; 
-  showConfirmPassword: boolean; 
+  showPassword: boolean;
+  showConfirmPassword: boolean;
 }
 
 interface SignupPageProps {
-  navigate: (path: string) => schaute
+  navigate: (path: string) => void;
 }
 
 class Signup extends Component<SignupPageProps, SignupState> {
@@ -30,8 +30,8 @@ class Signup extends Component<SignupPageProps, SignupState> {
       password: '',
       confirmPassword: '',
       errors: {},
-      showPassword: false, 
-      showConfirmPassword: false, 
+      showPassword: false,
+      showConfirmPassword: false,
     };
   }
 
@@ -115,6 +115,13 @@ class Signup extends Component<SignupPageProps, SignupState> {
 
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-white bg-[url('./assets/background_Dark_signup.webp')] bg-cover bg-center px-4 relative">
+        <style>
+          {`
+            input::-ms-reveal {
+              display: none !important; /* Hide Edge's native password reveal button */
+            }
+          `}
+        </style>
         <div className="absolute inset-0 bg-black/50 backdrop-bl-xs"></div>
 
         <motion.div
@@ -164,7 +171,7 @@ class Signup extends Component<SignupPageProps, SignupState> {
             <div>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? 'text' : 'password'} 
                   name="password"
                   placeholder="Enter your password"
                   value={password}
@@ -184,7 +191,7 @@ class Signup extends Component<SignupPageProps, SignupState> {
             <div>
               <div className="relative">
                 <input
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? 'text' : 'password'} 
                   name="confirmPassword"
                   placeholder="Confirm your password"
                   value={confirmPassword}

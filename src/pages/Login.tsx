@@ -96,6 +96,13 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
 
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-white bg-[url('./assets/background_Dark_signup.webp')] bg-cover bg-center px-4 relative">
+        <style>
+          {`
+            input::-ms-reveal {
+              display: none !important; /* Hide Edge's native password reveal button */
+            }
+          `}
+        </style>
         <div className="absolute inset-0 bg-black/50 backdrop-blur-xs"></div>
 
         <motion.div
