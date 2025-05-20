@@ -9,7 +9,7 @@ const App: React.FC = () => {
     generateToken();
     onMessage(messaging, (payload) => {
       console.log("Foreground message received:", payload);
-      const { title, body } = payload.notification || {};
+       const { title, body } = payload.notification || {};
 
     if (title && body) {
       toast(`${title}: ${body}`);
