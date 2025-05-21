@@ -54,7 +54,6 @@ const MovieDetailPage: React.FC = () => {
       try {
         const data = await getMoviesById(Number(id));
         if (data?.is_premium) {
-          console.log("MOVIE DETAILS: ", data);
           setMovie(data as Movie);
         } else {
           setMovie(data as Movie);

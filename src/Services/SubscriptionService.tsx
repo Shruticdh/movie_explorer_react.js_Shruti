@@ -22,8 +22,6 @@ export const createSubscription = async (planType: string): Promise<string> => {
         }
       );
 
-      console.log('API Response:', response.data);
-
       if (response.data.error) {
         throw new Error(response.data.error);
       }

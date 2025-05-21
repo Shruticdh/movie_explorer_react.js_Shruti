@@ -26,7 +26,6 @@ const GenreSection: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Initialize currentPage from URL query parameter
   useEffect(() => {
     const pageFromUrl = searchParams.get('page');
     const pageNum = pageFromUrl ? parseInt(pageFromUrl, 10) : 1;
@@ -70,7 +69,6 @@ const GenreSection: React.FC = () => {
       if (movieData.movies && movieData.movies.length > 0) {
         setMovies(movieData.movies);
         setSelectedGenre(genre);
-        // Reset page to 1 and remove page param when selecting a genre
         setCurrentPage(1);
         setSearchParams({});
       } else {
@@ -91,7 +89,6 @@ const GenreSection: React.FC = () => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
       setSelectedGenre(null);
-      // Update URL with new page number
       setSearchParams({ page: page.toString() });
     }
   };

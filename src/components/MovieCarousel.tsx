@@ -41,7 +41,6 @@ const MovieCarousel: React.FC = () => {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       setRole(user?.role || "");
-      console.log("User role:", user?.role);
     } catch (error) {
       console.error("Error parsing user from localStorage:", error);
       setRole("");
@@ -49,7 +48,6 @@ const MovieCarousel: React.FC = () => {
 
     try {
       const response = await getAllMovies();
-      console.log("All movies:", response);
       const movies = response?.movies || response;
       if (movies && Array.isArray(movies)) {
         setFeatured(movies.slice(0, 10));
@@ -64,7 +62,6 @@ const MovieCarousel: React.FC = () => {
 
     try {
       const response = await getMoviesByGenre("Romance");
-      console.log("Action movies:", response);
       const movies = response?.movies || response;
       if (movies && Array.isArray(movies)) {
         setPopular(movies.slice(0, 10));

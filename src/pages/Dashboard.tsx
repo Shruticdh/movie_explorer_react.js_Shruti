@@ -16,7 +16,6 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchSubscriptionStatus = async () => {
       const token = localStorage.getItem("token");
-      console.log("Token:", token);
       try {
         const response = await getSubscriptionStatus(token || "");
         const userPlan = response;

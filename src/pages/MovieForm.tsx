@@ -138,8 +138,6 @@ const MovieForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Submitting form with ID:", id);
-    console.log("Form data:", form);
 
     const ratingNum = parseFloat(form.rating);
     const durationNum = parseInt(form.duration, 10);

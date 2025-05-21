@@ -108,7 +108,7 @@ export const sendTokenToBackend = async (token: string): Promise<any> => {
       }
     );
 
-    console.log('Device token sent to backend successfully:', response.data);
+    // console.log('Device token sent to backend successfully:', response.data);
     return response.data;
   } catch (error: any) {
     console.error('Error sending device token to backend:', error);
