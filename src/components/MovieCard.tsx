@@ -92,14 +92,14 @@ const MovieCard: React.FC<SimpleMovieCardProps> = ({
           <div className="absolute top-2 right-2 flex gap-2 z-10">
             <button
               onClick={handleEdit}
-              className="bg-white p-1 rounded hover:scale-110"
+              className="bg-white p-1 rounded hover:scale-110 cursor-pointer"
               data-testid="edit-button"
             >
               <Pencil size={14} color="black" />
             </button>
             <button
               onClick={handleDelete}
-              className="bg-white p-1 rounded hover:scale-110"
+              className="bg-white p-1 rounded hover:scale-110 cursor-pointer"
               data-testid="delete-button"
             >
               <Trash2 size={14} color="black" />
