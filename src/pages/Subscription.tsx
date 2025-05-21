@@ -263,7 +263,7 @@ const Subscription = () => {
             </h2>
             <button
               onClick={handleGoBack}
-              className="mt-5 bg-red-700 text-white font-semibold py-2 px-4 rounded hover:bg-red-800 transition"
+              className="mt-5 bg-red-700 text-white font-semibold py-2 px-4 rounded hover:bg-red-800 transition cursor-pointer"
               aria-label="Go back to home"
             >
               Go back to home

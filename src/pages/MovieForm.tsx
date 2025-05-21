@@ -428,7 +428,7 @@ const MovieForm = () => {
             <motion.button
               type="submit"
               variants={fadeIn(1.3)}
-              className="w-full mt-4 bg-red-600 hover:bg-red-700 transition-all py-3 rounded-lg font-semibold tracking-wide shadow-lg"
+              className="w-full mt-4 bg-red-600 hover:bg-red-700 transition-all py-3 rounded-lg font-semibold tracking-wide shadow-lg cursor-pointer"
             >
               {isEditMode ? "Update Movie" : "Submit Movie"}
             </motion.button>
