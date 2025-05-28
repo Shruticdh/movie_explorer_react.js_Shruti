@@ -14,6 +14,10 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+  window.scrollTo(0, 0);  
+}, []);
+
+  useEffect(() => {
     const fetchSubscriptionStatus = async () => {
       const token = localStorage.getItem("token");
       try {

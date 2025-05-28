@@ -1,7 +1,5 @@
-import toast from 'react-hot-toast';
 import axios from 'axios';
 import { Movie } from '@mui/icons-material';
-import { Console } from 'console';
 
 const BASE_URL = 'https://movie-explorer-ror-ashutosh-singh.onrender.com'; 
 
@@ -28,6 +26,14 @@ interface Movie {
       per_page: number;
       total_count: number;
     };
+  }
+
+  interface RecommendationPreferences {
+    genre?: string;
+    release_year_from?: number;
+    release_year_to?: number;
+    duration_max?: number;
+    include_premium?: boolean;
   }
      
   export const getAllMoviesPagination = async (page: number = 1): Promise<MovieResponse> => {
@@ -81,6 +87,57 @@ interface Movie {
       return response.data.movies || [];
     } catch (error: any) {
       console.error('Error searching movies:', error.message);
+      return [];
+    }
+  };
+
+  // New function for movie recommendations based on user preferences
+  export const getRecommendedMovies = async (preferences: RecommendationPreferences): Promise<Movie[]> => {
+    try {
+      // Get all movies first (or use pagination if needed)
+      const allMoviesResponse = await getAllMovies();
+      
+      if (!allMoviesResponse || allMoviesResponse.length === 0) {
+        return [];
+      }
+
+      // Filter movies based on preferences
+      let filteredMovies = allMoviesResponse.filter((movie: Movie) => {
+        // Genre filter
+        if (preferences.genre && preferences.genre !== 'any') {
+          if (!movie.genre.toLowerCase().includes(preferences.genre.toLowerCase())) {
+            return false;
+          }
+        }
+
+        // Release year filter
+        if (preferences.release_year_from && movie.release_year < preferences.release_year_from) {
+          return false;
+        }
+        if (preferences.release_year_to && movie.release_year > preferences.release_year_to) {
+          return false;
+        }
+
+        // Duration filter
+        if (preferences.duration_max && movie.duration > preferences.duration_max) {
+          return false;
+        }
+
+        // Premium filter - if user doesn't want premium, exclude premium movies
+        if (preferences.include_premium === false && movie.is_premium) {
+          return false;
+        }
+
+        return true;
+      });
+
+      // Sort by rating (highest first) and return top 12 movies
+      filteredMovies.sort((a: Movie, b: Movie) => b.rating - a.rating);
+      
+      return filteredMovies.slice(0, 12);
+
+    } catch (error: any) {
+      console.error('Error getting recommended movies:', error.message);
       return [];
     }
   };
@@ -139,4 +196,3 @@ export const getMoviesById = async (id: number) => {
       return { movies: [] };
     }
   };
-

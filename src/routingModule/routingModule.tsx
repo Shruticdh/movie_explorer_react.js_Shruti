@@ -13,6 +13,7 @@ import Success from '../pages/Success';
 import SubscriptionPage from '../pages/SubscribePage';
 import UserProfile from '../pages/userProfile';
 import Cancel from '../pages/Cancel';
+import RecommendationQuiz from "../components/RecomendQuiz";
 
 const RoutingModule: React.FC = () => {
   
@@ -31,6 +32,18 @@ const RoutingModule: React.FC = () => {
         <Route path="/success" element={<ProtectedRoute><Success /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
         <Route path="/cancel" element={<ProtectedRoute><Cancel /></ProtectedRoute>} />
+        <Route
+          path="questions"
+          element={
+            <ProtectedRoute>
+              <RecommendationQuiz
+                isOpen={true}
+                onClose={() => {}}
+                onSubmit={() => {}}
+              />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

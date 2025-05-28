@@ -7,7 +7,23 @@ import { motion } from "framer-motion";
 const Header: React.FC = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
-  const [user, setUser] = useState<{ email: string; role: string } | null>(null);
+  const [user, setUser] = useState<{ name:string; email: string; role: string } | null>(null);
+  const [isPremium, setIsPremium] = useState(false);
+  
+    const fetchUserPlan = async () => {
+      const plan = localStorage.getItem("userPlan");
+      return plan || "basic"; 
+    };
+
+    useEffect(() => {
+  const checkPremium = async () => {
+    const plan = await fetchUserPlan();
+    setIsPremium(plan.toLowerCase() === "premium");
+  };
+  checkPremium();
+}, []);
+
+
 
   const navigate = useNavigate();
   const location = useLocation(); 
@@ -27,7 +43,6 @@ const Header: React.FC = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("userPlan");
-    localStorage.removeItem("userPlan2");
     navigate("/");
   };
 
@@ -50,7 +65,7 @@ const Header: React.FC = () => {
         >
           <button onClick={handleHomePage} data-testid="logo">
             <div className="text-xl font-bold text-red-600 cursor-pointer">
-              M<span className="text-white">OVIEXPO</span>
+              M<span className="text-white">OVIEXPO!!</span>
             </div>
           </button>
         </motion.div>
@@ -119,16 +134,18 @@ const Header: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute right-0 top-12 mt-2 w-70 bg-black/70 text-white rounded-lg shadow-lg p-4 z-50"
+                  className="absolute right-0 top-12 mt-2 w-70 bg-black/70 text-white rounded-lg shadow-lg p-4 z-50 gap-5"
                 >
                   <div className="text-sm">
                     <p className="text-red-600 text-xl font-bold">
-                      Welcome To MovieExpo
+                      Welcome To <span className="text-xl font-bold text-red-600 cursor-pointer">
+              M<span className="text-white">OVIEXPO!!</span>
+            </span>
                     </p>
                     <p className="font-semibold">
                       Role : {user?.role || "Guest"}
                     </p>
-                    <p className="text-white-600">Email : {user?.email}</p>
+                    <p className="text-white-600">Name : {user?.name}</p>
                   </div>
                   <hr className="my-2" />
                   <div className="flex flex-col space-y-2 text-sm">
@@ -148,16 +165,22 @@ const Header: React.FC = () => {
                 </motion.div>
               )}
 
-              <motion.button
-                className="bg-red-700 hover:bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold cursor-pointer"
-                onClick={handleSubscribeClick}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5 }}
-                data-testid="subscribe-button"
-              >
-                Subscribe Now
-              </motion.button>
+{isPremium ? (
+   <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wider">
+                  ⭐ Premium
+                </span>
+                ) : (
+                <motion.button
+                  className="bg-red-700 hover:bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold cursor-pointer"
+                  onClick={handleSubscribeClick}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.5 }}
+                  data-testid="subscribe-button"
+                >
+                    Subscribe Now
+                  </motion.button>
+)}
             </motion.div>
           </div>
 
@@ -180,16 +203,18 @@ const Header: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className="absolute right-0 top-12 mt-2 w-70 bg-black/80 text-white rounded-lg shadow-lg p-4 z-50"
+                className="absolute right-0 top-12 mt-2 w-70 bg-black/80 text-white rounded-lg shadow-lg p-4 z-50 gap-5"
               >
                 <div className="text-sm">
                   <p className="text-red-600 text-xl font-bold">
-                    Welcome To MovieExpo
+                    Welcome To <span className="text-xl font-bold text-red-600 cursor-pointer">
+              M<span className="text-white">OVIEXPO!!</span>
+            </span>
                   </p>
                   <p className="font-semibold">
                     Role : {user?.role || "Guest"}
                   </p>
-                  <p className="text-white-600">Email : {user?.email}</p>
+                  <p className="text-white-600">Name : {user?.name}</p>
                 </div>
                 <hr className="my-2" />
                 <div className="flex flex-col space-y-2 text-sm">

@@ -22,6 +22,7 @@ const plans = [
       "Dive into a quick reel of movie magic!",
     ],
     buttonText: "Get started",
+    gradient: 'from-gray-800 to-gray-900',
   },
   {
     title: "7_days",
@@ -40,6 +41,7 @@ const plans = [
       "Unleash 7 days of cinematic glory!",
     ],
     buttonText: "Get started",
+    gradient: 'from-red-900 to-pink-900',
   },
   {
     title: "1_month",
@@ -58,6 +60,7 @@ const plans = [
       "Unlock a month of exclusive movie magic!",
     ],
     buttonText: "Get started",
+    gradient: 'from-purple-900 to-indigo-900',
   },
 ];
 
@@ -152,7 +155,7 @@ const Subscription = () => {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: index * 0.3 }}
-            className={`bg-gradient-to-br from-gray-600 to-gray-900  p-6 rounded-2xl shadow-lg flex flex-col justify-between hover:scale-105 transition-transform duration-300 hover:shadow-xl hover:shadow-gray-700`}
+            className={`bg-gradient-to-br ${plan.gradient} p-6 rounded-2xl shadow-lg flex flex-col justify-between hover:scale-105 transition-transform duration-300 hover:shadow-xl hover:shadow-gray-700`}
           >
             <div>
               <h2 className="text-2xl font-bold mb-4">{plan.title2}</h2>
