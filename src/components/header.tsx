@@ -165,11 +165,6 @@ const Header: React.FC = () => {
                 </motion.div>
               )}
 
-{isPremium ? (
-   <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wider">
-                  ⭐ Premium
-                </span>
-                ) : (
                 <motion.button
                   className="bg-red-700 hover:bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold cursor-pointer"
                   onClick={handleSubscribeClick}
@@ -180,7 +175,6 @@ const Header: React.FC = () => {
                 >
                     Subscribe Now
                   </motion.button>
-)}
             </motion.div>
           </div>
 
