@@ -91,7 +91,7 @@ const Header: React.FC = () => {
               onClick={handleMoveToMovies}
               data-testid="menu-item"
             >
-              Movies
+              Search
             </motion.span>
 
             <motion.span
@@ -134,20 +134,20 @@ const Header: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute right-0 top-12 mt-2 w-70 bg-black/70 text-white rounded-lg shadow-lg p-4 z-50 gap-5"
+                  className="absolute right-0 top-12 mt-2 w-70 bg-black/70 text-white rounded-lg shadow-lg p-5 z-50 gap-10"
                 >
                   <div className="text-sm">
-                    <p className="text-red-600 text-xl font-bold">
+                    <p className="text-red-600 text-xl font-bold mb-2">
                       Welcome To <span className="text-xl font-bold text-red-600 cursor-pointer">
               M<span className="text-white">OVIEXPO!!</span>
-            </span>
+            </span><br></br>
                     </p>
-                    <p className="font-semibold">
+                    <p className="font-semibold mb-1">
                       Role : {user?.role || "Guest"}
                     </p>
-                    <p className="text-white-600">Name : {user?.name}</p>
+                    <p className="text-white-600 mb-3">Name : {user?.name}</p>
                   </div>
-                  <hr className="my-2" />
+                  {/* <hr className="my-2" /> */}
                   <div className="flex flex-col space-y-2 text-sm">
                     <button
                       className="cursor-pointer p-1 bg-red-600 border border-red-600 rounded-lg hover:text-white-500 cursor-pointer"
@@ -197,10 +197,10 @@ const Header: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className="absolute right-0 top-12 mt-2 w-70 bg-black/80 text-white rounded-lg shadow-lg p-4 z-50 gap-5"
+                className="absolute right-0 top-12 mt-2 w-70 bg-black/80 text-white rounded-lg shadow-lg p-5 z-50 gap-5 "
               >
                 <div className="text-sm">
-                  <p className="text-red-600 text-xl font-bold">
+                  <p className="text-red-600 text-xl font-bold mb-1">
                     Welcome To <span className="text-xl font-bold text-red-600 cursor-pointer">
               M<span className="text-white">OVIEXPO!!</span>
             </span>
@@ -208,9 +208,8 @@ const Header: React.FC = () => {
                   <p className="font-semibold">
                     Role : {user?.role || "Guest"}
                   </p>
-                  <p className="text-white-600">Name : {user?.name}</p>
+                  <p className="text-white-600 mb-2">Name : {user?.name}</p>
                 </div>
-                <hr className="my-2" />
                 <div className="flex flex-col space-y-2 text-sm">
                   <button
                     className="cursor-pointer p-1 bg-red-600 border border-red-600 rounded-lg hover:text-white-500 cursor-pointer"
@@ -254,7 +253,7 @@ const Header: React.FC = () => {
         >
           {[
             { label: "Home", action: handleHomePage, path: "/dashboard" },
-            { label: "Movies", action: handleMoveToMovies, path: "/all-movies" },
+            { label: "Search", action: handleMoveToMovies, path: "/all-movies" },
             { label: "Genre", action: handleMoveToGenre, path: "/genre" },
             ...(user?.role === "supervisor"
               ? [{ label: "Add Movies", action: handleMoveToAddMovies, path: "/add-movie" }]
