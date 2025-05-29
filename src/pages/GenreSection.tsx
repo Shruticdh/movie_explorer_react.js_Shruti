@@ -558,6 +558,7 @@ const GenreSection: React.FC = () => {
                     title={movie.title}
                     imageUrl={movie.poster_url}
                     duration={`${movie.duration} min`}
+                    is_premium={movie.is_premium}
                     genre={movie.genre}
                     role={role || undefined}
                   />

@@ -7,6 +7,10 @@ import Subscription from './Subscription';
 
 const SubscriptionPage: React.FC = () => {
 
+  useEffect(() => {
+      window.scrollTo(0, 0);  
+    }, []);
+
   return (
     <div className="bg-black min-h-screen text-white">
       <Header />

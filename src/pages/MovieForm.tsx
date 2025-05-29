@@ -47,6 +47,10 @@ const MovieForm = () => {
   const isEditMode = Boolean(id);
 
   useEffect(() => {
+      window.scrollTo(0, 0);  
+    }, []);
+
+  useEffect(() => {
     console.log("Fetching movie with ID:", id);
     if (isEditMode && id) {
       getMoviesById(Number(id))

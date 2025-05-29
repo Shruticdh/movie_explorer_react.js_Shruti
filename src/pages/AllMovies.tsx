@@ -1,4 +1,4 @@
-// import React, { useEffect, useState, useRef } from 'react';
+// import React, { useEffect, useState } from 'react';
 // import { getAllMoviesPagination, searchMovies as searchMoviesAPI, getRecommendedMovies } from '../Services/MovieService';
 // import MovieCard from '../components/MovieCard';
 // import Header from '../components/header';
@@ -8,7 +8,7 @@
 // import RecommendationQuiz from '../components/RecomendQuiz';
 // import { useSearchParams } from 'react-router-dom';
 // import toast from 'react-hot-toast';
-// import { Sparkles, Grid, X, ChevronLeft, ChevronRight } from 'lucide-react';
+// import { Sparkles, Grid, X } from 'lucide-react';
 
 // interface Movie {
 //   id: number;
@@ -44,25 +44,9 @@
 //   const [isRecommendationMode, setIsRecommendationMode] = useState(false);
 //   const [currentPreferences, setCurrentPreferences] = useState<RecommendationPreferences>({});
 
-//   // Carousel states
-//   const [currentSlide, setCurrentSlide] = useState(0);
-//   const [isMobile, setIsMobile] = useState(false);
-//   const carouselRef = useRef<HTMLDivElement>(null);
-
 //   useEffect(() => {
-//     window.scrollTo(0, 0);  
-//   }, []);
-
-//   // Check if screen is mobile
-//   useEffect(() => {
-//     const checkMobile = () => {
-//       setIsMobile(window.innerWidth < 768); // md breakpoint
-//     };
-    
-//     checkMobile();
-//     window.addEventListener('resize', checkMobile);
-//     return () => window.removeEventListener('resize', checkMobile);
-//   }, []);
+//   window.scrollTo(0, 0);  
+// }, []);
 
 //   useEffect(() => {
 //     const timer = setTimeout(() => {
@@ -84,11 +68,6 @@
 //       fetchMovies(currentPage);
 //     }
 //   }, [debouncedSearchTerm, currentPage, isRecommendationMode]);
-
-//   // Reset carousel when movies change
-//   useEffect(() => {
-//     setCurrentSlide(0);
-//   }, [movies]);
 
 //   const fetchMovies = async (page: number) => {
 //     try {
@@ -185,198 +164,6 @@
 //     return parts.join(', ');
 //   };
 
-//   // Carousel navigation functions
-//   const nextSlide = () => {
-//     if (isMobile && movies.length > 0) {
-//       const maxSlide = Math.max(0, movies.length - 2); // Show 2 cards at once on mobile
-//       setCurrentSlide(prev => Math.min(prev + 1, maxSlide));
-//     }
-//   };
-
-//   const prevSlide = () => {
-//     if (isMobile) {
-//       setCurrentSlide(prev => Math.max(prev - 1, 0));
-//     }
-//   };
-
-//   // Touch/swipe functionality
-//   const [touchStart, setTouchStart] = useState<number | null>(null);
-//   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-
-//   const onTouchStart = (e: React.TouchEvent) => {
-//     setTouchEnd(null);
-//     setTouchStart(e.targetTouches[0].clientX);
-//   };
-
-//   const onTouchMove = (e: React.TouchEvent) => {
-//     setTouchEnd(e.targetTouches[0].clientX);
-//   };
-
-//   const onTouchEnd = () => {
-//     if (!touchStart || !touchEnd) return;
-    
-//     const distance = touchStart - touchEnd;
-//     const isLeftSwipe = distance > 50;
-//     const isRightSwipe = distance < -50;
-
-//     if (isLeftSwipe) {
-//       nextSlide();
-//     }
-//     if (isRightSwipe) {
-//       prevSlide();
-//     }
-//   };
-
-//   // Mouse wheel scrolling functionality
-//   const handleWheel = (e: React.WheelEvent) => {
-//     if (!isMobile) return; // Only enable wheel scrolling on mobile carousel
-    
-//     e.preventDefault();
-    
-//     if (e.deltaY > 0) {
-//       // Scrolling down - go to next slide
-//       nextSlide();
-//     } else if (e.deltaY < 0) {
-//       // Scrolling up - go to previous slide
-//       prevSlide();
-//     }
-//   };
-
-//   const movieContainerVariants = {
-//     hidden: {},
-//     show: {
-//       transition: {
-//         staggerChildren: 0.05,
-//       },
-//     },
-//   };
-
-//   const movieCardVariants = {
-//     hidden: { opacity: 0, y: 30 },
-//     show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-//   };
-
-//   const renderMovieCards = () => {
-//     if (isMobile && movies.length > 0) {
-//       // Mobile Carousel View
-//       return (
-//         <div className="w-full px-4">
-//           {/* Carousel Navigation Buttons */}
-//           <div className="flex justify-between items-center mb-4">
-//             <button
-//               onClick={prevSlide}
-//               disabled={currentSlide === 0}
-//               className={`p-2 rounded-full ${
-//                 currentSlide === 0 
-//                   ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-//                   : 'bg-red-600 text-white hover:bg-red-700'
-//               }`}
-//             >
-//               <ChevronLeft size={20} />
-//             </button>
-            
-//             {/* <span className="text-white text-sm">
-//               {currentSlide + 1} - {Math.min(currentSlide + 2, movies.length)} of {movies.length}
-//             </span> */}
-            
-//             <button
-//               onClick={nextSlide}
-//               disabled={currentSlide >= movies.length - 2}
-//               className={`p-2 rounded-full ${
-//                 currentSlide >= movies.length - 2
-//                   ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-//                   : 'bg-red-600 text-white hover:bg-red-700'
-//               }`}
-//             >
-//               <ChevronRight size={20} />
-//             </button>
-//           </div>
-
-//           {/* Carousel Container */}
-//           <div 
-//             className="overflow-hidden"
-//             onTouchStart={onTouchStart}
-//             onTouchMove={onTouchMove}
-//             onTouchEnd={onTouchEnd}
-//             onWheel={handleWheel}
-//           >
-//             <motion.div
-//               ref={carouselRef}
-//               className="flex transition-transform duration-200 ease-in-out gap-"
-//               style={{
-//                 transform: `translateX(-${currentSlide * 50}%)`,
-//               }}
-//             >
-//               {movies.map((movie, index) => (
-//                 <motion.div 
-//                   key={movie.id} 
-//                   className="flex-shrink-1 w-[50%] sm:w-[33.33%] md:w-[25%] lg:w-[20%] px-2"
-//                   variants={movieCardVariants}
-//                   initial="hidden"
-//                   animate="show"
-//                   transition={{ delay: index * 0.05, duration: 0.4 }}
-//                 >
-//                   <MovieCard
-//                     id={movie.id.toString()}
-//                     title={movie.title}
-//                     imageUrl={movie.poster_url}
-//                     duration={`${movie.duration} min`}
-//                     is_premium={movie.is_premium}
-//                     genre={movie.genre}
-//                     role={role || undefined}
-//                   />
-//                 </motion.div>
-//               ))}
-//             </motion.div>
-//           </div>
-
-//           {/* Dots Indicator
-//           {movies.length > 2 && (
-//             <div className="flex justify-center mt-4 gap-2">
-//               {Array.from({ length: Math.max(1, movies.length - 1) }, (_, i) => (
-//                 <button
-//                   key={i}
-//                   onClick={() => setCurrentSlide(i)}
-//                   className={`w-2 h-2 rounded-full transition-colors ${
-//                     i === currentSlide ? 'bg-red-500' : 'bg-gray-600'
-//                   }`}
-//                 />
-//               ))}
-//             </div>
-//           )} */}
-//         </div>
-//       );
-//     } else {
-//       // Desktop Grid View
-//       return (
-//         <motion.div
-//           className="w-[67%] max-w-7xl flex flex-wrap gap-[25px] justify-center items-center !mb-[50px] max-sm:w-[92%] max-md:w-[90%] max-xl:w-[90%] max-[1515px]:w-[90%]"
-//           variants={movieContainerVariants}
-//           initial="hidden"
-//           animate="show"
-//         >
-//           {movies.map((movie, index) => (
-//             <motion.div 
-//               key={movie.id} 
-//               variants={movieCardVariants}
-//               transition={{ delay: index * 0.05, duration: 0.4 }}
-//             >
-//               <MovieCard
-//                 id={movie.id.toString()}
-//                 title={movie.title}
-//                 imageUrl={movie.poster_url}
-//                 duration={`${movie.duration} min`}
-//                 is_premium={movie.is_premium}
-//                 genre={movie.genre}
-//                 role={role || undefined}
-//               />
-//             </motion.div>
-//           ))}
-//         </motion.div>
-//       );
-//     }
-//   };
-
 //   return (
 //     <div>
 //       <Header />
@@ -395,11 +182,11 @@
 //               {/* Get Recommendations Button */}
 //               <motion.button
 //                 onClick={() => setIsQuizOpen(true)}
-//                 className="mt-4 mb-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
+//                 className="mt-4 mb-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 shadow-lg"
 //                 whileHover={{ scale: 1.05 }}
 //                 whileTap={{ scale: 0.95 }}
 //               >
-//                 <div className="flex items-center  ">
+//                 <div className="flex items-center ">
 //                   <Sparkles size={20} />
 //                   <span className='px-1 py-1 sm:px-1 sm:py-1 text-xs lg:text-lg '>Get Personal Recommendations</span>
 //                 </div>
@@ -466,12 +253,28 @@
 //             )}
 //           </div>
 //         ) : (
-//           renderMovieCards()
+//           <div 
+//           className="w-[67%] max-w-7xl flex max-sm:w-[92%] flex-wrap gap-[25px] justify-center items-center !mb-[50px] max-md:w-[90%] max-xl:w-[90%] max-[1515px]:w-[90%]"
+//           >
+//             {movies.map((movie, index) => (
+//               <motion.div key={movie.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05, duration: 0.4 }}>
+//                 <MovieCard
+//                   id={movie.id.toString()}
+//                   title={movie.title}
+//                   imageUrl={movie.poster_url}
+//                   duration={`${movie.duration} min`}
+//                   is_premium={movie.is_premium}
+//                   genre={movie.genre}
+//                   role={role || undefined}
+//                 />
+//               </motion.div>
+//             ))}
+//           </div>
 //         )}
 
 //         {/* Pagination - only show if not in recommendation mode and not searching */}
 //         {!debouncedSearchTerm && !isRecommendationMode && movies.length > 0 && !isLoading && (
-//           <motion.div className=" mb-10 flex justify-center items-center mt-8 gap-2 flex-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+//           <motion.div className="flex justify-center items-center mt-8 gap-2 flex-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
 //             <button
 //               onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
 //               disabled={currentPage === 1}
@@ -542,15 +345,11 @@
 //   );
 // };
 
-
 // export default AllMovies;
 
 
-
-
-
-import React, { useEffect, useState } from 'react';
-import { getAllMoviesPagination, searchMovies as searchMoviesAPI, getRecommendedMovies } from '../Services/MovieService';
+import React, { useEffect, useState, useCallback } from 'react';
+import { getAllMoviesPagination, searchMovies as searchMoviesAPI, getRecommendedMovies, getMoviesByGenre } from '../Services/MovieService';
 import MovieCard from '../components/MovieCard';
 import Header from '../components/header';
 import Footer from '../components/footer';
@@ -560,6 +359,7 @@ import RecommendationQuiz from '../components/RecomendQuiz';
 import { useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { Sparkles, Grid, X } from 'lucide-react';
+import { partial_ratio } from 'fuzzball';
 
 interface Movie {
   id: number;
@@ -582,77 +382,118 @@ interface RecommendationPreferences {
 const AllMovies: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialPage = parseInt(searchParams.get('page') || '1', 10);
+  const initialGenre = searchParams.get('genre') || 'all';
   const [role, setRole] = useState<string | null>(null);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [selectedGenre, setSelectedGenre] = useState(initialGenre);
   const [isLoading, setIsLoading] = useState(true);
-  
-  // New states for recommendation feature
-  const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isRecommendationMode, setIsRecommendationMode] = useState(false);
   const [currentPreferences, setCurrentPreferences] = useState<RecommendationPreferences>({});
+  const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false); // Add this state
+  const [isSearching, setIsSearching] = useState(false); // Add this to track search state
+
+
+    useEffect(() => {
+    window.scrollTo(0, 0);  
+  }, []);
 
   useEffect(() => {
-  window.scrollTo(0, 0);  
-}, []);
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    setRole(user?.role || null);
+  }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 400);
+  // Debounce function
+  const debounce = <T extends (...args: any[]) => void>(func: T, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: Parameters<T>) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
 
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
-
-  useEffect(() => {
-    if (isRecommendationMode) {
-      // Don't fetch if we're in recommendation mode
+  // Fetch suggestions
+  const fetchSuggestions = async (query: string) => {
+    if (!query || !showSuggestions) { // Check showSuggestions flag
+      setSuggestions([]);
       return;
     }
-    
-    if (debouncedSearchTerm) {
-      searchMovies(debouncedSearchTerm);
-    } else {
-      fetchMovies(currentPage);
-    }
-  }, [debouncedSearchTerm, currentPage, isRecommendationMode]);
-
-  const fetchMovies = async (page: number) => {
     try {
-      setIsLoading(true);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      setRole(user?.role);
-      const data = await getAllMoviesPagination(page);
-      if (data.movies && data.movies.length > 0) {
-        setMovies(data.movies);
-        setTotalPages(data.pagination.total_pages);
+      let movieData;
+      if (query.length <= 4) {
+        movieData = selectedGenre === 'all' ? await getAllMoviesPagination(1) : await getMoviesByGenre(selectedGenre, 1);
       } else {
-        setMovies([]);
-        setTotalPages(1);
-        toast.error('No movies found');
+        movieData = await searchMoviesAPI(query, selectedGenre, 1);
       }
+
+      const movieTitles = movieData?.movies?.map((movie: Movie) => movie.title) || [];
+
+      const fuzzyResults = movieTitles
+        .map((title) => ({
+          title,
+          score: partial_ratio(query.toLowerCase(), title.toLowerCase()),
+        }))
+        .filter((result) => result.score > 40)
+        .sort((a, b) => b.score - a.score)
+        .map((result) => result.title)
+        .slice(0, 5);
+
+      setSuggestions(fuzzyResults);
     } catch (error: any) {
-      console.error('Fetch error:', error.message);
-      setMovies([]);
-    } finally {
-      setIsLoading(false);
+      console.error('Error fetching suggestions:', error.message);
+      setSuggestions([]);
     }
   };
 
-  const searchMovies = async (query: string) => {
+  const debouncedFetchSuggestions = useCallback(debounce(fetchSuggestions, 500), [selectedGenre, showSuggestions]);
+
+  // Handle search
+  const loadMovies = async (query: string, genre: string, page: number) => {
+    // Prevent multiple simultaneous searches
+    if (isSearching) return;
+    
     try {
+      setIsSearching(true);
       setIsLoading(true);
-      const results = await searchMoviesAPI(query);
-      if (results && results.length > 0) {
-        setMovies(results);
-        setTotalPages(1);
+      let movieData;
+      if (query) {
+        movieData = await searchMoviesAPI(query, genre, page);
+      } else if (genre === 'all') {
+        movieData = await getAllMoviesPagination(page);
+      } else {
+        movieData = await getMoviesByGenre(genre, page);
+      }
+
+      let movieArray = movieData?.movies || [];
+      const paginationData = movieData?.pagination || {
+        current_page: page,
+        total_pages: 1,
+        total_count: movieArray.length,
+        per_page: 10,
+      };
+
+      if (query) {
+        movieArray = movieArray
+          .map((movie: Movie) => ({
+            ...movie,
+            score: partial_ratio(query.toLowerCase(), movie.title.toLowerCase()),
+          }))
+          .filter((movie: Movie & { score: number }) => movie.score > 40)
+          .sort((a, b) => b.score - a.score);
+      }
+
+      if (movieArray.length > 0) {
+        setMovies(movieArray);
+        setTotalPages(paginationData.total_pages);
       } else {
         setMovies([]);
         setTotalPages(1);
-        toast.error('No movies found for this search');
+        console.error('No movies found for this search');
       }
     } catch (error: any) {
       console.error('Search error:', error.message);
@@ -660,15 +501,53 @@ const AllMovies: React.FC = () => {
       toast.error('Search failed');
     } finally {
       setIsLoading(false);
+      setIsSearching(false);
     }
   };
+
+  const debouncedSearch = useCallback(debounce(loadMovies, 1000), []);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Modified useEffect for search term changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      // Only show suggestions if user is actively typing (not after selecting a suggestion)
+      if (searchTerm && showSuggestions) {
+        debouncedFetchSuggestions(searchTerm);
+      } else {
+        setSuggestions([]);
+      }
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, debouncedFetchSuggestions, showSuggestions]);
+
+  // Modified useEffect for debouncedSearchTerm and URL params
+  useEffect(() => {
+    if (isRecommendationMode) {
+      return;
+    }
+
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const genre = searchParams.get('genre') || 'all';
+    
+    // Only update state if they're different to prevent unnecessary re-renders
+    if (currentPage !== page) setCurrentPage(page);
+    if (selectedGenre !== genre) setSelectedGenre(genre);
+    
+    loadMovies(debouncedSearchTerm, genre, page);
+  }, [debouncedSearchTerm, searchParams, isRecommendationMode]);
 
   const handleRecommendationSubmit = async (preferences: RecommendationPreferences) => {
     try {
       setIsLoading(true);
       setCurrentPreferences(preferences);
       const recommendations = await getRecommendedMovies(preferences);
-      
+
       if (recommendations && recommendations.length > 0) {
         setMovies(recommendations);
         setIsRecommendationMode(true);
@@ -689,16 +568,58 @@ const AllMovies: React.FC = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    setSearchParams({ page: page.toString() });
+    setSearchParams({ page: page.toString(), genre: selectedGenre });
+  };
+
+  const handleGenreSelect = (genreId: string) => {
+    setSelectedGenre(genreId);
+    setCurrentPage(1);
+    setSearchParams({ page: '1', genre: genreId });
+    // Don't call loadMovies here - let the useEffect handle it
+  };
+
+  // Modified suggestion click handler
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchTerm(suggestion);
+    setSuggestions([]);
+    setShowSuggestions(false); // Hide suggestions after selection
+    setCurrentPage(1);
+    setSearchParams({ page: '1', genre: selectedGenre });
+    // Don't call loadMovies here - let the useEffect handle it
+  };
+
+  // Add handler for search input focus/blur
+  const handleSearchFocus = () => {
+    setShowSuggestions(true);
+    if (searchTerm) {
+      debouncedFetchSuggestions(searchTerm);
+    }
+  };
+
+  const handleSearchBlur = () => {
+    // Delay hiding suggestions to allow for clicks
+    setTimeout(() => {
+      setShowSuggestions(false);
+      setSuggestions([]);
+    }, 150);
+  };
+
+  // Add handler for search term changes from SearchBar
+  const handleSearchTermChange = (term: string) => {
+    setSearchTerm(term);
+    setShowSuggestions(true); // Show suggestions when user is typing
   };
 
   const exitRecommendationMode = () => {
     setIsRecommendationMode(false);
     setCurrentPreferences({});
     setSearchTerm('');
+    setSuggestions([]);
+    setShowSuggestions(false);
+    setIsSearching(false); // Reset search state
     setCurrentPage(1);
-    setSearchParams({});
-    fetchMovies(1);
+    setSearchParams({ page: '1', genre: 'all' });
+    loadMovies('', 'all', 1);
   };
 
   const getRecommendationSummary = () => {
@@ -711,7 +632,6 @@ const AllMovies: React.FC = () => {
       parts.push(`under ${currentPreferences.duration_max}min`);
     }
     if (currentPreferences.include_premium === false) parts.push('free only');
-    
     return parts.join(', ');
   };
 
@@ -724,22 +644,27 @@ const AllMovies: React.FC = () => {
             Your Gateway to Movie <span className="text-red-500">Magic</span>
           </h1>
           <p className="text-gray-400 mt-2 mb-5">Dive into the world of cinema with MovieVerse.</p>
-          
-          {/* Search Bar and Recommendation Button */}
+
+          {/* Genre Chips and Search Bar */}
           {!isRecommendationMode && (
             <>
-              <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-              
-              {/* Get Recommendations Button */}
+              <SearchBar
+                searchTerm={searchTerm}
+                setSearchTerm={handleSearchTermChange} // Use the new handler
+                suggestions={showSuggestions ? suggestions : []} // Only show suggestions when flag is true
+                onSuggestionClick={handleSuggestionClick}
+                onFocus={handleSearchFocus} // Add these props if your SearchBar supports them
+                onBlur={handleSearchBlur}
+              />
               <motion.button
                 onClick={() => setIsQuizOpen(true)}
-                className="mt-4 mb-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 shadow-lg"
+                className="mt-4 mb-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <div className="flex items-center ">
+                <div className="flex items-center">
                   <Sparkles size={20} />
-                  <span className='px-1 py-1 sm:px-1 sm:py-1 text-xs lg:text-lg '>Get Personal Recommendations</span>
+                  <span className="px-1 py-1 sm:px-1 sm:py-1 text-xs lg:text-lg">Get Personal Recommendations</span>
                 </div>
               </motion.button>
             </>
@@ -747,12 +672,8 @@ const AllMovies: React.FC = () => {
 
           {/* Recommendation Mode Header */}
           {isRecommendationMode && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-4"
-            >
-              <div className="bg-gradient-to-r from-red-900/30 to-red-800/30 border border-red-700/50 rounded-lg p-4 max-w-2xl mx-auto ">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+              <div className="bg-gradient-to-r from-red-900/30 to-red-800/30 border border-red-700/50 rounded-lg p-4 max-w-2xl mx-auto">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Sparkles className="text-red-400" size={24} />
@@ -763,7 +684,7 @@ const AllMovies: React.FC = () => {
                   </div>
                   <button
                     onClick={exitRecommendationMode}
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors cursor-pointer"
                     title="Back to all movies"
                   >
                     <X size={20} />
@@ -804,12 +725,16 @@ const AllMovies: React.FC = () => {
             )}
           </div>
         ) : (
-          <div 
-          className="w-[67%] max-w-7xl flex max-sm:w-[92%] flex-wrap gap-[25px] justify-center items-center !mb-[50px] max-md:w-[90%] max-xl:w-[90%] max-[1515px]:w-[90%]"
-          >
+          <div className="w-[67%] max-w-7xl flex max-sm:w-[92%] flex-wrap gap-[25px] justify-center items-center !mb-[50px] max-md:w-[90%] max-xl:w-[90%] max-[1515px]:w-[90%]">
             {movies.map((movie, index) => (
-              <motion.div key={movie.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05, duration: 0.4 }}>
+              <motion.div
+                key={movie.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05, duration: 0.4 }}
+              >
                 <MovieCard
+                {...movie}
                   id={movie.id.toString()}
                   title={movie.title}
                   imageUrl={movie.poster_url}
@@ -823,13 +748,19 @@ const AllMovies: React.FC = () => {
           </div>
         )}
 
-        {/* Pagination - only show if not in recommendation mode and not searching */}
         {!debouncedSearchTerm && !isRecommendationMode && movies.length > 0 && !isLoading && (
-          <motion.div className="flex justify-center items-center mt-8 gap-2 flex-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+          <motion.div
+            className="flex justify-center items-center mt-8 gap-2 flex-wrap"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
             <button
               onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
               disabled={currentPage === 1}
-              className={`px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm  rounded ${currentPage === 1 ? 'bg-gray-500 text-gray-300 cursor-not-allowed' : 'bg-red-700 text-gray-200 hover:bg-red-600 cursor-pointer'}`}
+              className={`px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm rounded ${
+                currentPage === 1 ? 'bg-gray-500 text-gray-300 cursor-not-allowed' : 'bg-red-700 text-gray-200 hover:bg-red-600 cursor-pointer'
+              }`}
             >
               Previous
             </button>
@@ -838,7 +769,9 @@ const AllMovies: React.FC = () => {
               <button
                 key={i}
                 onClick={() => handlePageChange(i + 1)}
-                className={`cursor-pointer px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm  rounded ${currentPage === i + 1 ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                className={`cursor-pointer px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm rounded ${
+                  currentPage === i + 1 ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                }`}
               >
                 {i + 1}
               </button>
@@ -847,24 +780,18 @@ const AllMovies: React.FC = () => {
             <button
               onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className={`px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm rounded ${currentPage === totalPages ? 'bg-gray-500 text-gray-300 cursor-not-allowed' : 'bg-red-700 text-gray-200 hover:bg-red-600 cursor-pointer'}`}
+              className={`px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm rounded ${
+                currentPage === totalPages ? 'bg-gray-500 text-gray-300 cursor-not-allowed' : 'bg-red-700 text-gray-200 hover:bg-red-600 cursor-pointer'
+              }`}
             >
               Next
             </button>
           </motion.div>
         )}
 
-        {/* Recommendation Mode Footer */}
         {isRecommendationMode && movies.length > 0 && (
-          <motion.div 
-            className="mt-8 text-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            <p className="text-gray-400 mb-4">
-              Found {movies.length} movies matching your preferences
-            </p>
+          <motion.div className="mt-8 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+            <p className="text-gray-400 mb-4">Found {movies.length} movies matching your preferences</p>
             <div className="flex gap-4 justify-center flex-wrap">
               <button
                 onClick={() => setIsQuizOpen(true)}
@@ -884,7 +811,6 @@ const AllMovies: React.FC = () => {
         )}
       </div>
 
-      {/* Recommendation Quiz Modal */}
       <RecommendationQuiz
         isOpen={isQuizOpen}
         onClose={() => setIsQuizOpen(false)}

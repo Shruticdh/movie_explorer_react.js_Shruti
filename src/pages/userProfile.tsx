@@ -575,6 +575,10 @@ const UserProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
+  useEffect(() => {
+      window.scrollTo(0, 0);  
+    }, []);
+
   // Helper function to format dates
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -896,7 +900,7 @@ const UserProfile = () => {
                 )}
               </motion.div>
               
-              <div className="mt-4 w-full max-w-xs flex flex-col items-center space-y-3">
+              <div className="mt-4 w-full max-w-xs flex flex-col items-center space-y-3 mt-5">
                 {/* Show upload interface only if user doesn't have a profile picture */}
                 {!user?.profile_picture_url && (
                   <>
@@ -922,7 +926,7 @@ const UserProfile = () => {
                     <button
                       onClick={handleUpload}
                       disabled={!selectedFile || isUploading}
-                      className={`w-full px-3 py-2 rounded-lg text-xs text-white transition-colors ${
+                      className={`w-full px-3 py-2 rounded-lg text-xs text-white transition-colors mt-5 ${
                         selectedFile && !isUploading
                           ? "bg-red-700 hover:bg-red-600 cursor-pointer"
                           : "bg-zinc-700 cursor-not-allowed opacity-50"
@@ -936,9 +940,12 @@ const UserProfile = () => {
                 {/* Show remove button only if user has a profile picture */}
                 {user?.profile_picture_url && (
                   <button
-                    onClick={handleRemove}
+                    onClick={async () => {
+                      await handleRemove();
+                      await fetchUser();
+                    }}
                     disabled={isUploading}
-                    className="w-full px-3 py-2 bg-red-700 hover:bg-red-600 rounded-lg text-xs text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="w-full px-3 py-2 bg-red-700 mt-8 hover:bg-red-600 rounded-lg text-xs text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {isUploading ? "Removing..." : "Remove Picture"}
                   </button>
@@ -1003,14 +1010,26 @@ const UserProfile = () => {
                   </div>
                 );
               })}
-            </div>
-
-            <button
+                <button
               className="w-[120px] mt-5 cursor-pointer p-2 bg-red-700 border border-red-600 rounded-lg hover:bg-red-600 transition-colors text-white"
               onClick={handleLogout}
             >
               Logout
             </button>
+           <button
+                    className="w-[120px] mt-5 cursor-pointer p-2 bg-red-700 border border-red-600 rounded-lg hover:bg-red-600 transition-colors text-white"
+                    onClick={() => navigate("/subscription")}
+                  >
+                    Explore Plan
+                  </button>
+            </div>
+
+            {/* <button
+              className="w-[120px] mt-5 cursor-pointer p-2 bg-red-700 border border-red-600 rounded-lg hover:bg-red-600 transition-colors text-white"
+              onClick={handleLogout}
+            >
+              Logout
+            </button> */}
 
             <div
               className={`mt-5 p-4 rounded-xl border relative overflow-hidden transition-all duration-300 ${
@@ -1064,12 +1083,12 @@ const UserProfile = () => {
                       {plan}
                     </span>
                   </p>
-                  <button
+                  {/* <button
                     className="px-4 py-2 bg-red-700 hover:bg-red-600 rounded-lg text-white text-sm cursor-pointer transition-colors"
                     onClick={() => navigate("/subscription")}
                   >
                     Explore Plan
-                  </button>
+                  </button> */}
                 </>
               )}
             </div>
