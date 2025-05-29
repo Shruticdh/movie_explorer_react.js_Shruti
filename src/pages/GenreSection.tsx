@@ -242,7 +242,7 @@ const GenreSection: React.FC = () => {
               {movies.map((movie: any, index) => (
                 <motion.div 
                   key={movie.id} 
-                  className="flex-shrink-0 w-1/2"
+                  className="flex-shrink-1 w-[50%] sm:w-[33.33%] md:w-[25%] lg:w-[20%] px-2"
                   variants={movieCardVariants}
                   initial="hidden"
                   animate="show"

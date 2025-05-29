@@ -198,7 +198,7 @@ const MovieCarousel: React.FC = () => {
   );
 
   return (
-    <div className="py-4 -mt-20">
+    <div className="py-4 ">
       {renderCarousel('Featured Movies', featured, featuredRef, featuredInView)}
       {renderCarousel('Popular Movies', popular, popularRef, popularInView)}
       {renderCarousel('CineShuffle ', mixedGenre, mixedGenreRef, mixedGenreInView)}

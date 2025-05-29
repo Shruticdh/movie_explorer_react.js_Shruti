@@ -275,9 +275,9 @@ const AllMovies: React.FC = () => {
               <ChevronLeft size={20} />
             </button>
             
-            <span className="text-white text-sm">
+            {/* <span className="text-white text-sm">
               {currentSlide + 1} - {Math.min(currentSlide + 2, movies.length)} of {movies.length}
-            </span>
+            </span> */}
             
             <button
               onClick={nextSlide}
@@ -302,7 +302,7 @@ const AllMovies: React.FC = () => {
           >
             <motion.div
               ref={carouselRef}
-              className="flex transition-transform duration-300 ease-in-out gap-4"
+              className="flex transition-transform duration-200 ease-in-out gap-"
               style={{
                 transform: `translateX(-${currentSlide * 50}%)`,
               }}
@@ -310,7 +310,7 @@ const AllMovies: React.FC = () => {
               {movies.map((movie, index) => (
                 <motion.div 
                   key={movie.id} 
-                  className="flex-shrink-0 w-1/2"
+                  className="flex-shrink-1 w-[50%] sm:w-[33.33%] md:w-[25%] lg:w-[20%] px-2"
                   variants={movieCardVariants}
                   initial="hidden"
                   animate="show"
@@ -330,7 +330,7 @@ const AllMovies: React.FC = () => {
             </motion.div>
           </div>
 
-          {/* Dots Indicator */}
+          {/* Dots Indicator
           {movies.length > 2 && (
             <div className="flex justify-center mt-4 gap-2">
               {Array.from({ length: Math.max(1, movies.length - 1) }, (_, i) => (
@@ -343,7 +343,7 @@ const AllMovies: React.FC = () => {
                 />
               ))}
             </div>
-          )}
+          )} */}
         </div>
       );
     } else {
