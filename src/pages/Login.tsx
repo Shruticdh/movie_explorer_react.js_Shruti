@@ -198,7 +198,7 @@ class LoginPage extends Component<LoginPageProps, LoginPageState> {
 
             <motion.button
               type="submit"
-              className="w-[50%] py-2 bg-red-800 text-white font-semibold rounded-full hover:bg-red-700 transition mx-auto block"
+              className="w-[50%] py-2 bg-red-800 text-white font-semibold rounded-full hover:bg-red-700 transition mx-auto block cursor-pointer"
               disabled={isLoading}
               variants={{ hidden: { opacity: 0, scale: 0.8 }, visible: { opacity: 1, scale: 1 } }}
             >

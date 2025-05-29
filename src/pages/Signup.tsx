@@ -211,7 +211,7 @@ class Signup extends Component<SignupPageProps, SignupState> {
 
             <button
               type="submit"
-              className="w-[50%] py-2 bg-red-800 text-white font-semibold rounded-full hover:bg-red-700 transition mx-auto block"
+              className="w-[50%] py-2 bg-red-800 text-white font-semibold rounded-full hover:bg-red-700 transition mx-auto block cursor-pointer"
             >
               SIGNUP
             </button>

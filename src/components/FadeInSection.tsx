@@ -15,7 +15,7 @@ const FadeInSection: React.FC<FadeInSectionProps> = ({ children }) => {
         if (entry.isIntersecting) {
           controls.start({ opacity: 1, y: 0 });
         } else {
-          controls.start({ opacity: 0, y: 50 });
+          controls.start({ opacity: 0, y: 30 });
         }
       },
       {
@@ -40,7 +40,7 @@ const FadeInSection: React.FC<FadeInSectionProps> = ({ children }) => {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={controls}
       transition={{ duration: 0.6, ease: 'easeOut' }}
     >

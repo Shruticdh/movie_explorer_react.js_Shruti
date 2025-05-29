@@ -97,7 +97,7 @@ export const sendTokenToBackend = async (token: string): Promise<any> => {
     console.log('Sending FCM token to backend:', token);
     console.log('Using auth token:', authToken);
 
-    const response = await axios.post(
+    const response = await axios.put(
       `${BASE_URL}/api/v1/update_device_token`,
       { device_token: token },
       {

@@ -395,11 +395,11 @@ const AllMovies: React.FC = () => {
               {/* Get Recommendations Button */}
               <motion.button
                 onClick={() => setIsQuizOpen(true)}
-                className="mt-4 mb-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 shadow-lg"
+                className="mt-4 mb-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <div className="flex items-center ">
+                <div className="flex items-center  ">
                   <Sparkles size={20} />
                   <span className='px-1 py-1 sm:px-1 sm:py-1 text-xs lg:text-lg '>Get Personal Recommendations</span>
                 </div>
