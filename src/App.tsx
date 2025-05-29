@@ -15,8 +15,8 @@ const App: React.FC = () => {
       toast(`${title}: ${body}`);
     }
 
-    });
-  }, []);
+  });
+  },[]);
 
   return (
     <>
@@ -34,21 +34,20 @@ const App: React.FC = () => {
             borderRadius: "8px",
           },
 
-          // Different styles for different toast types
           success: {
             iconTheme: {
-              primary: "#10b981", // green-500
-              secondary: "#ecfdf5", // green-50
+              primary: "#10b981", 
+              secondary: "#ecfdf5", 
             },
           },
           error: {
             iconTheme: {
-              primary: "#ef4444", // red-500
-              secondary: "#fee2e2", // red-100
+              primary: "#ef4444", 
+              secondary: "#fee2e2", 
             },
           },
-        }}
-      />
+     }}
+    />
       <RoutingModule />
     </>
   );
