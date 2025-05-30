@@ -81,7 +81,7 @@ const MovieCard: React.FC<SimpleMovieCardProps> = ({
           className="w-full h-[160px] sm:h-[200px] md:h-[220px] lg:h-[240px] object-cover"
         />
         {is_premium === true &&(
-            <div className="absolute top-1 sm:top-2 left-1 sm:left-2 p-1 rounded-full z-20">
+            <div className=" bg-black/70 absolute top-1 sm:top-2 left-1 sm:left-2 p-2 rounded-full z-20">
               <span className="text-yellow-200 text-xs font-semibold">
                 <Crown size={16} color="yellow" />
               </span>

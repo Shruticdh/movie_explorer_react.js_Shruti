@@ -9,14 +9,14 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="space-y-2">
           <div className="flex flex-wrap gap-4 text-sm">
-            <span className="hover:underline">Terms of Use</span>
-            <span className="hover:underline">Privacy-Policy</span>
-            <span className="hover:underline">Blog</span>
-            <span className="hover:underline">FAQ</span>
-            <span className="hover:underline">Watch List</span>
+            <span className="hover:underline cursor-pointer">Terms of Use</span>
+            <span className="hover:underline cursor-pointer">Privacy-Policy</span>
+            <span className="hover:underline cursor-pointer">Blog</span>
+            <span className="hover:underline cursor-pointer">FAQ</span>
+            <span className="hover:underline cursor-pointer">Home</span>
           </div>
           <p className="text-xs text-gray-400 mt-4">
-            © 2022 STREAMIT. All Rights Reserved. All videos and shows on this
+            © 2025 MovieExpo!. All Rights Reserved. All videos and shows on this
             platform are trademarks of, and all related images and content are
             the property of, Streamit Inc. Duplication and copy of this is
             strictly prohibited. All rights reserved.
@@ -28,25 +28,25 @@ const Footer: React.FC = () => {
           <div className="flex gap-4">
             <span>
               <FaFacebookF
-                className="text-xl hover:text-gray-400"
+                className="text-xl hover:text-gray-400 cursor-pointer"
                 aria-label="Facebook"
               />
             </span>
             <span>
               <FaTwitter
-                className="text-xl hover:text-gray-400"
+                className="text-xl hover:text-gray-400  cursor-pointer"
                 aria-label="Twitter"
               />
             </span>
             <span>
               <FaGithub
-                className="text-xl hover:text-gray-400"
+                className="text-xl hover:text-gray-400 cursor-pointer"
                 aria-label="GitHub"
               />
             </span>
             <span>
               <FaInstagram
-                className="text-xl hover:text-gray-400"
+                className="text-xl hover:text-gray-400  cursor-pointer"
                 aria-label="Instagram"
               />
             </span>
@@ -54,7 +54,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="flex flex-col items-start md:items-end">
-          <h4 className="mb-3 font-semibold">Streamit App</h4>
+          <h4 className="mb-3 font-semibold"> MovieExpo! App</h4>
           <div className="flex gap-4">
             <img src={AppStoreImg} alt="App Store" className="h-8" />
             <span>AppStore</span>

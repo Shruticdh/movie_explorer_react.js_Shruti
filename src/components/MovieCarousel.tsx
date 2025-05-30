@@ -199,10 +199,10 @@ const MovieCarousel: React.FC = () => {
 
   return (
     <div className="py-4 ">
-      {renderCarousel('Featured Movies', featured, featuredRef, featuredInView)}
+      {renderCarousel('Top Rated ', featured, featuredRef, featuredInView)}
       {renderCarousel('Popular Movies', popular, popularRef, popularInView)}
       {renderCarousel('CineShuffle ', mixedGenre, mixedGenreRef, mixedGenreInView)}
-      {renderCarousel('Top Rated', topRated, topRatedRef, topRatedInView)}
+      {/* {renderCarousel('Top Rated', topRated, topRatedRef, topRatedInView)} */}
     </div>
   );
 };
