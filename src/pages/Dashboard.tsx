@@ -112,7 +112,7 @@ const Dashboard: React.FC = () => {
       
       if (!token) {
         toast.error("No authentication token found. Please login again.");
-        navigate("/login");
+        navigate("/");
         return;
       }
 
@@ -138,7 +138,7 @@ const Dashboard: React.FC = () => {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
           localStorage.removeItem("currentUser");
-          navigate("/login");
+          navigate("/");
         }
       }
     };

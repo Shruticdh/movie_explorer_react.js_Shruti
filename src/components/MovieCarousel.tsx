@@ -139,7 +139,7 @@ const MovieCarousel: React.FC = () => {
   }, []);
 
   const handleClick = () => {
-    navigate('/all-movies')
+    navigate('/all-movies')        
   }
 
   const renderCarousel = (
