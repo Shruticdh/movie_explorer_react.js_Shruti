@@ -41,20 +41,17 @@ const MovieCarousel: React.FC = () => {
   const mixedGenreInView = useInView(mixedGenreRef, { once: true });
   const topRatedInView = useInView(topRatedRef, { once: true });
 
-  // Function to fetch movies from multiple genres
   const fetchMixedGenreMovies = async () => {
     const genres = ['Action', 'Comedy', 'Drama', 'Thriller', 'Horror', 'Sci-Fi'];
     const mixedMovies: Movie[] = [];
 
     try {
-      // Fetch movies from each genre
       for (const genre of genres) {
         try {
           const response = await getMoviesByGenre(genre);
           const movies = response?.movies || response;
           
           if (movies && Array.isArray(movies)) {
-            // Take minimum 2 movies from each genre
             const genreMovies = movies.slice(0, 2);
             mixedMovies.push(...genreMovies);
           }
@@ -63,10 +60,8 @@ const MovieCarousel: React.FC = () => {
         }
       }
 
-      // Shuffle the array to mix genres randomly
       const shuffledMovies = mixedMovies.sort(() => Math.random() - 0.5);
       
-      // Limit to 12 movies total for better performance
       setMixedGenre(shuffledMovies.slice(0, 12));
     } catch (error) {
       console.error("Error fetching mixed genre movies:", error);
@@ -84,7 +79,6 @@ const MovieCarousel: React.FC = () => {
         setRole("");
       }
 
-      // Fetch featured movies
       try {
         const response = await getAllMovies();
         const movies = response?.movies || response;
@@ -99,7 +93,6 @@ const MovieCarousel: React.FC = () => {
         setFeatured([]);
       }
 
-      // Fetch popular movies (Romance)
       try {
         const response = await getMoviesByGenre("Romance");
         const movies = response?.movies || response;
@@ -129,8 +122,6 @@ const MovieCarousel: React.FC = () => {
         setTopRated([]);
       }
 
-
-      // Fetch mixed genre movies
       await fetchMixedGenreMovies();
 
     };

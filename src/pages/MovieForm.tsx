@@ -21,6 +21,17 @@ const fadeIn = (delay = 0) => ({
   },
 });
 
+const isValidYouTubeUrl = (url) => {
+  if (!url) return true; 
+  
+  const patterns = [
+    /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)[a-zA-Z0-9_-]{11}$/,
+    /^[a-zA-Z0-9_-]{11}$/,
+  ];
+  
+  return patterns.some(pattern => pattern.test(url));
+};
+
 const MovieForm = () => {
   const [form, setForm] = useState({
     title: "",
@@ -34,10 +45,11 @@ const MovieForm = () => {
     is_premium: false,
     poster_url: "",
     banner_url: "",
+    trailer: "", 
   });
 
-  const [banner, setBanner] = useState<File | null>(null);
-  const [poster, setPoster] = useState<File | null>(null);
+  const [banner, setBanner] = useState(null);
+  const [poster, setPoster] = useState(null);
   const [directorInput, setDirectorInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const directorRef = useRef(null);
@@ -56,6 +68,9 @@ const MovieForm = () => {
       getMoviesById(Number(id))
         .then((res) => {
           const movie = res;
+          console.log("Fetched movie data:", movie); 
+          console.log("Movie trailer from API:", movie?.trailer); 
+          
           if (!movie) {
             toast.error("Movie details not found");
             return;
@@ -72,8 +87,12 @@ const MovieForm = () => {
             is_premium: Boolean(movie.is_premium),
             poster_url: movie.poster_url,
             banner_url: movie.banner_url,
+            trailer: movie.trailer || "", 
           });
           setDirectorInput(movie.director);
+          
+          // Additional debug log
+          console.log("Form trailer field set to:", movie.trailer || "");
         })
         .catch((err) => {
           console.error("Error fetching movie details:", err);
@@ -84,6 +103,10 @@ const MovieForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "trailer") {
+      console.log("Trailer field changed to:", value);
+    }
 
     if (name === "rating") {
       if (value === "") {
@@ -121,6 +144,13 @@ const MovieForm = () => {
       }
       setForm({ ...form, release_year: value });
     }
+    else if (name === "trailer") {
+      if (value && !isValidYouTubeUrl(value)) {
+        toast.error("Please enter a valid YouTube URL or video ID");
+        return;
+      }
+      setForm({ ...form, trailer: value });
+    }
     else {
       setForm({ ...form, [name]: value });
     }
@@ -142,6 +172,8 @@ const MovieForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log("Form submission started with data:", form); 
+    console.log("Trailer field value:", form.trailer);
 
     const ratingNum = parseFloat(form.rating);
     const durationNum = parseInt(form.duration, 10);
@@ -160,25 +192,51 @@ const MovieForm = () => {
       return;
     }
 
+    if (form.trailer && !isValidYouTubeUrl(form.trailer)) {
+      toast.error("Please enter a valid YouTube URL or video ID");
+      return;
+    }
+
     const formData = new FormData();
+
     Object.entries(form).forEach(([key, value]) => {
-      formData.append(`movie[${key}]`, typeof value === "boolean" ? String(value) : value);
+      const formValue = typeof value === "boolean" ? String(value) : value;
+      formData.append(`movie[${key}]`, formValue);
+      console.log(`Adding to FormData: movie[${key}] = ${formValue}`);
     });
-    if (banner) formData.append("movie[banner]", banner);
-    if (poster) formData.append("movie[poster]", poster);
+    
+    if (banner) {
+      formData.append("movie[banner]", banner);
+      console.log("Adding banner file to FormData");
+    }
+    if (poster) {
+      formData.append("movie[poster]", poster);
+      console.log("Adding poster file to FormData");
+    }
+
+    console.log("Complete FormData entries:");
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ': ' + pair[1]);
+    }
 
     try {
+      let response;
       if (isEditMode) {
-        await updateMovie(id, formData);
+        console.log(`Updating movie with ID: ${id}`);
+        response = await updateMovie(id, formData);
         toast.success("Movie updated successfully!");
       } else {
-        await addMovie(formData);
+        console.log("Creating new movie");
+        response = await addMovie(formData);
         toast.success("Movie added successfully!");
       }
+      
+      console.log("API Response:", response);
       navigate("/dashboard");
     } catch (error) {
+      console.error("Submission error:", error);
+      console.error("Error response:", error.response?.data);
       toast.error("Error while submitting movie");
-      console.error(error.response?.data || error.message);
     }
   };
 
@@ -222,13 +280,14 @@ const MovieForm = () => {
         <div className="backdrop-blur-sm bg-gradient-to-br from-black via-zinc-900 bg-white/5 border border-gray-700 rounded-2xl shadow-2xl p-8 w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8">
           <motion.div initial="hidden" animate="visible" variants={fadeIn(0)}>
             <h2 className="text-4xl font-bold mb-4">
-              <span className="text-red-600">Add</span> Movie
+              <span className="text-red-600">{isEditMode ? "Edit" : "Add"}</span> Movie
               <span className="text-red-600"> M</span>OVIEXPO
             </h2>
             <p className="text-gray-300 mb-6 leading-relaxed">
-              Please fill out all required fields including image files.
+              Please fill out all required fields including image files and trailer URL.
             </p>
 
+        
             <motion.div
               variants={fadeIn(0.3)}
               initial="hidden"
@@ -368,7 +427,34 @@ const MovieForm = () => {
                 <label className="text-sm text-gray-300 -mt-3">Premium Plan</label>
               </motion.div>
             </motion.div>
+
+            {/* Trailer URL Field */}
             <motion.div className="space-y-2" variants={fadeIn(0.9)}>
+              <label className="text-sm text-gray-300">
+                Trailer URL (YouTube)
+                <span className="text-gray-500 text-xs ml-2">
+                  (Optional - YouTube URL or Video ID)
+                </span>
+              </label>
+              <input
+                type="text"
+                name="trailer"
+                value={form.trailer}
+                onChange={handleChange}
+                placeholder="e.g. https://www.youtube.com/watch?v=dQw4w9WgXcQ or dQw4w9WgXcQ"
+                className="w-full bg-zinc-800 p-3 rounded-lg focus:ring-2 focus:ring-red-600"
+              />
+              <p className="text-xs text-gray-500">
+                Accepts YouTube URLs (youtube.com/watch?v=..., youtu.be/...) or direct video IDs
+              </p>
+              {form.trailer && (
+                <p className="text-xs text-green-400">
+                  ✓ Current value: {form.trailer}
+                </p>
+              )}
+            </motion.div>
+
+            <motion.div className="space-y-2" variants={fadeIn(1.0)}>
               <label className="text-sm text-gray-300">Description *</label>
               <textarea
                 name="description"
@@ -443,14 +529,5 @@ const MovieForm = () => {
 };
 
 export default MovieForm;
-
-
-
-
-
-
-
-
-
 
 

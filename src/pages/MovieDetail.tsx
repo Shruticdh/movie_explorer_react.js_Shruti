@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getMoviesById, getMoviesByGenre } from "../Services/MovieService";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaPlay } from "react-icons/fa";
 import Header from "../components/header";
 import Footer from "../components/footer";
-import MovieCard from "../components/MovieCard"; // Import your MovieCard component
+import MovieCard from "../components/MovieCard";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import YouTube, { YouTubeProps } from "react-youtube";
 
 interface Movie {
   id: number;
@@ -21,6 +22,7 @@ interface Movie {
   main_lead: string;
   poster_url: string;
   banner_url: string;
+  trailer?: string;
 }
 
 const containerVariant = {
@@ -61,17 +63,81 @@ const movieCardVariant = {
   },
 };
 
+const modalVariant = {
+  hidden: { 
+    opacity: 0,
+    scale: 0.8,
+    y: 50
+  },
+  visible: { 
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      damping: 25,
+      stiffness: 500,
+      duration: 0.4
+    }
+  },
+  exit: { 
+    opacity: 0,
+    scale: 0.8,
+    y: 50,
+    transition: {
+      duration: 0.3,
+      ease: "easeInOut"
+    }
+  }
+};
+
+const backdropVariant = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { duration: 0.3 }
+  },
+  exit: { 
+    opacity: 0,
+    transition: { duration: 0.3 }
+  }
+};
+
+
+const extractYouTubeVideoId = (url: string): string | null => {
+  if (!url) return null;
+  
+  const patterns = [
+    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i,
+    /^([a-zA-Z0-9_-]{11})$/, 
+    /youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
+    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+  
+  console.warn('Could not extract YouTube video ID from:', url);
+  return null;
+};
+
 const MovieDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [movie, setMovie] = useState<Movie | null>(null);
   const [similarMovies, setSimilarMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [similarMoviesLoading, setSimilarMoviesLoading] = useState(false);
+  const [showTrailer, setShowTrailer] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-  window.scrollTo(0, 0);  
-}, []);
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -79,6 +145,9 @@ const MovieDetailPage: React.FC = () => {
 
       try {
         const data = await getMoviesById(Number(id));
+        console.log('Fetched movie data:', data);
+        console.log('Movie trailer URL:', data?.trailer);
+        
         if (data?.is_premium) {
           setMovie(data as Movie);
         } else {
@@ -99,7 +168,6 @@ const MovieDetailPage: React.FC = () => {
     fetchMovie();
   }, [id, navigate]);
 
-  // Fetch similar movies when movie data is loaded
   useEffect(() => {
     const fetchSimilarMovies = async () => {
       if (!movie) return;
@@ -109,7 +177,6 @@ const MovieDetailPage: React.FC = () => {
         const response = await getMoviesByGenre(movie.genre, 1);
         const movies = response.movies || [];
         
-        // Filter out the current movie and limit to 6 similar movies
         const filteredMovies = movies
           .filter((m: Movie) => m.id !== movie.id)
           .slice(0, 6);
@@ -126,17 +193,37 @@ const MovieDetailPage: React.FC = () => {
     fetchSimilarMovies();
   }, [movie]);
 
+  const onPlayerReady: YouTubeProps['onReady'] = (event) => {
+    console.log('YouTube player ready');
+  };
+
+  const onPlayerError: YouTubeProps['onError'] = (event) => {
+    console.error('YouTube player error:', event);
+    toast.error('Error loading trailer');
+  };
+
+  const opts: YouTubeProps['opts'] = {
+    height: '390',
+    width: '100%',
+    playerVars: {
+      autoplay: 1,
+      controls: 1,
+      modestbranding: 1,
+      rel: 0,
+    },
+  };
+
   if (loading) {
     return (
       <div>
         <Header />
-      <div className="bg-black min-h-screen flex flex-col items-center justify-center">
-        <div className="flex flex-col items-center justify-center min-h-[400px]">
-          <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-white text-lg font-semibold">Loading Movie Details...</p>
+        <div className="bg-black min-h-screen flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center min-h-[400px]">
+            <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-white text-lg font-semibold">Loading Movie Details...</p>
+          </div>
         </div>
-      </div>
-      <Footer />
+        <Footer />
       </div>
     );
   }
@@ -153,6 +240,11 @@ const MovieDetailPage: React.FC = () => {
     );
   }
 
+  const videoId = movie.trailer ? extractYouTubeVideoId(movie.trailer) : null;
+  
+  console.log('Movie trailer:', movie.trailer);
+  console.log('Extracted video ID:', videoId);
+
   return (
     <div className="bg-black min-h-screen">
       <Header />
@@ -163,7 +255,7 @@ const MovieDetailPage: React.FC = () => {
         animate="visible"
         className="relative flex flex-col items-start justify-center min-h-50 md:min-h-20 text-left px-6 md:px-16 py-10"
         style={{
-          backgroundImage: `url(${movie.banner_url})`,
+          backgroundImage:`url(${movie.banner_url})`,
           backgroundSize: "cover",
           backgroundPosition: "top center",
         }}
@@ -214,14 +306,109 @@ const MovieDetailPage: React.FC = () => {
               </span>
             </motion.div>
 
-            <motion.p variants={itemVariant} className="text-gray-300 mt-4">
-              {movie.description}
-            </motion.p>
+            <motion.div variants={itemVariant} className="mt-4">
+              <p className="text-gray-300">{movie.description}</p>
+              
+               <div className="flex justify-start md:justify-end mt-6">
+              {movie.trailer ? (
+                videoId ? (
+                 <motion.button
+                      onClick={() => {
+                        console.log('Play trailer clicked, video ID:', videoId);
+                        setShowTrailer(true);
+                      }}
+                      className="group relative overflow-hidden px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105 hover:from-red-500 hover:to-red-600 cursor-pointer"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                      <div className="relative flex items-center gap-3">
+                        <div className="p-2 bg-white/20 rounded-full">
+                          <FaPlay className="text-sm" />
+                        </div>
+                        <span>Play Trailer</span>
+                      </div>
+                    </motion.button>
+                  ) : (
+                    <div className="px-8 py-4 bg-gray-600/50 text-gray-400 rounded-xl font-bold text-lg border border-gray-500">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-gray-500/50 rounded-full">
+                          <FaPlay className="text-sm" />
+                        </div>
+                        <span>Trailer Unavailable</span>
+                      </div>
+                    </div>
+                )
+              ) : (
+                 <div className="px-8 py-4 bg-gray-600/50 text-gray-400 rounded-xl font-bold text-lg border border-gray-500">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-gray-500/50 rounded-full">
+                        <FaPlay className="text-sm" />
+                      </div>
+                      <span>No Trailer Available</span>
+                    </div>
+                  </div>
+              )}
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </motion.div>
 
-      {/* Similar Movies Section */}
+      {showTrailer && videoId && (
+        <motion.div
+          variants={backdropVariant}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowTrailer(false)}
+        >
+          <motion.div 
+            variants={modalVariant}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            className="relative w-full max-w-4xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <motion.button
+              onClick={() => {
+                console.log('Close trailer clicked');
+                setShowTrailer(false);
+              }}
+              className="absolute -top-10 right-0 text-white text-3xl hover:text-red-500 transition-colors z-10 rounded-full cursor-pointer"
+              title="Close trailer"
+              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
+            > 
+              ✕
+            </motion.button>
+            <motion.div
+             className="relative w-full"
+             style={{ paddingBottom: '56.25%'}}
+              initial={{ borderRadius: 0 }}
+              animate={{ borderRadius: 16 }}
+              transition={{ delay: 0.2 }}
+             >
+              <div className="absolute inset-0">
+                <YouTube 
+                  videoId={videoId} 
+                  opts={{
+                    ...opts,
+                    height: '100%',
+                    width: '100%',
+                  }} 
+                  onReady={onPlayerReady}
+                  onError={onPlayerError}
+                  className="w-full h-full"
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      )}
+
       <motion.div
         variants={containerVariant}
         initial="hidden"
@@ -254,7 +441,7 @@ const MovieDetailPage: React.FC = () => {
                   duration={`${similarMovie.duration}min`}
                   genre={similarMovie.genre}
                   is_premium={similarMovie.is_premium}
-                  quality="HD" // You can adjust this based on your data
+                  quality="HD"
                   role={localStorage.getItem("role") || ""}
                 />
               </motion.div>

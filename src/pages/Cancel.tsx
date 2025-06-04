@@ -44,15 +44,12 @@ const Cancel = () => {
 
   return (
     <div className="min-h-screen bg-[#14141E] flex items-center justify-center relative px-4">
-      {/* Blurred background */}
       <div
         className="absolute inset-0 bg-[url('./assets/background_Dark_signup.webp')] bg-cover bg-center"
         style={{ filter: 'blur(4px)' }}
       >
         <div className="absolute inset-0 bg-black/40" />
       </div>
-
-      {/* Foreground card */}
       <div className="max-w-md w-full bg-black/90 text-white rounded-2xl shadow-xl p-8 border border-red-900 z-10 text-center relative">
         {loading ? (
           <div className="flex flex-col items-center">
