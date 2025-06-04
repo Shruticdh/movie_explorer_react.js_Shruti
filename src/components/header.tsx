@@ -330,7 +330,7 @@ const Header: React.FC = () => {
           <motion.button
             className={`px-4 py-2 w-full rounded-full text-sm font-semibold mt-4 transition-all duration-300 ${
               isPremium 
-                ? "bg-yellow-500 hover:bg-yellow-600 text-black cursor-default" 
+                ? "bg-yellow-500 hover:bg-yellow-600 text-black cursor-pointer" 
                 : "bg-red-500 hover:bg-red-600 text-white cursor-pointer"
             }`}
             onClick={handleSubscribeClick}

@@ -13,7 +13,26 @@ interface SimpleMovieCardProps {
   is_premium: boolean;
   quality?: string;
   role?: string;
+  isLoading?: boolean;
 }
+
+const MovieCardSkeleton: React.FC = () => {
+  return (
+    <div className="w-[120px] sm:w-[150px] md:w-[180px] lg:w-[200px] text-white animate-pulse">
+      <div className="rounded-sm overflow-hidden shadow-md relative">
+        <div className="w-full h-[160px] sm:h-[200px] md:h-[220px] lg:h-[240px] bg-gray-700 shimmer"></div>
+        <div className="bg-gray-600 absolute top-1 sm:top-2 left-1 sm:left-2 p-2 rounded-full">
+          <div className="w-4 h-4 bg-gray-500 rounded"></div>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between gap-1 sm:gap-2 mt-1">
+        <div className="mt-1 w-3/4 h-3 sm:h-4 bg-gray-700 rounded shimmer"></div>
+        <div className="flex-shrink-0 w-8 sm:w-10 h-3 sm:h-4 bg-gray-700 rounded shimmer"></div>
+      </div>
+    </div>
+  );
+};
 
 const MovieCard: React.FC<SimpleMovieCardProps> = ({
   id,
@@ -24,9 +43,14 @@ const MovieCard: React.FC<SimpleMovieCardProps> = ({
   is_premium,
   quality,
   role,
+  isLoading = false, 
 }) => {
   const navigate = useNavigate();
   const userPlan = localStorage.getItem("userPlan");
+
+  if (isLoading) {
+    return <MovieCardSkeleton />;
+  }
 
   const handlePremiumAccess = () => {
     if (is_premium) {

@@ -27,8 +27,8 @@ const GenreSection: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-  window.scrollTo(0, 0);  
-}, []);
+  window.scrollTo(0, 0);  
+}, []);
 
   useEffect(() => {
     const pageFromUrl = searchParams.get('page');
@@ -117,6 +117,28 @@ const GenreSection: React.FC = () => {
     show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
+  const renderSkeletonCards = () => {
+    return Array.from({ length: 10 }).map((_, index) => (
+      <motion.div
+        key={`skeleton-${index}`}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05, duration: 0.4 }}
+      >
+        <MovieCard
+          id=""
+          title=""
+          imageUrl=""
+          duration=""
+          is_premium={false}
+          genre=""
+          role={role || undefined}
+          isLoading={true}
+        />
+      </motion.div>
+    ));
+  };
+
   return (
     <div>
       <Header />
@@ -144,9 +166,8 @@ const GenreSection: React.FC = () => {
           </motion.div>
 
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center min-h-[400px]">
-              <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-              <p className="text-white text-lg font-semibold">Loading Movies...</p>
+            <div className="w-[67%] max-w-7xl flex max-sm:w-[92%] flex-wrap gap-[25px] justify-center items-center !mb-[50px] max-md:w-[90%] max-xl:w-[90%] max-[1515px]:w-[90%]">
+              {renderSkeletonCards()}
             </div>
           ) : movies.length > 0 ? (
             <motion.div
@@ -226,4 +247,3 @@ const GenreSection: React.FC = () => {
 };
 
 export default GenreSection;
-

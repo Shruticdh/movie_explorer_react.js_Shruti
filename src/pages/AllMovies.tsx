@@ -58,7 +58,6 @@ const AllMovies: React.FC = () => {
     setRole(user?.role || null);
   }, []);
 
-  // Enhanced fuzzy scoring function
   const calculateFuzzyScore = (query: string, title: string): number => {
     const normalizedQuery = query.toLowerCase().trim();
     const normalizedTitle = title.toLowerCase().trim();
@@ -72,7 +71,6 @@ const AllMovies: React.FC = () => {
     
     return Math.max(...scores);
   };
-
 
   const debounce = <T extends (...args: any[]) => void>(func: T, delay: number) => {
     let timeoutId: NodeJS.Timeout;
@@ -375,6 +373,29 @@ const AllMovies: React.FC = () => {
     return parts.join(', ');
   };
 
+  // Generate skeleton cards for loading state
+  const renderSkeletonCards = () => {
+    return Array.from({ length: 10 }).map((_, index) => (
+      <motion.div
+        key={`skeleton-${index}`}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05, duration: 0.4 }}
+      >
+        <MovieCard
+          id=""
+          title=""
+          imageUrl=""
+          duration=""
+          is_premium={false}
+          genre=""
+          role={role || undefined}
+          isLoading={true}
+        />
+      </motion.div>
+    ));
+  };
+
   return (
     <div>
       <Header />
@@ -442,11 +463,8 @@ const AllMovies: React.FC = () => {
         </motion.div>
 
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center min-h-[400px]">
-            <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-white text-lg font-semibold">
-              {isRecommendationMode ? 'Finding Perfect Movies for You...' : 'Loading Movies...'}
-            </p>
+          <div className="w-[67%] max-w-7xl flex max-sm:w-[92%] flex-wrap gap-[25px] justify-center items-center !mb-[50px] max-md:w-[90%] max-xl:w-[90%] max-[1515px]:w-[90%]">
+            {renderSkeletonCards()}
           </div>
         ) : movies.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[400px]">
@@ -485,7 +503,7 @@ const AllMovies: React.FC = () => {
                 transition={{ delay: index * 0.05, duration: 0.4 }}
               >
                 <MovieCard
-                {...movie}
+                  {...movie}
                   id={movie.id.toString()}
                   title={movie.title}
                   imageUrl={movie.poster_url}
@@ -493,6 +511,7 @@ const AllMovies: React.FC = () => {
                   is_premium={movie.is_premium}
                   genre={movie.genre}
                   role={role || undefined}
+                  isLoading={false}
                 />
               </motion.div>
             ))}

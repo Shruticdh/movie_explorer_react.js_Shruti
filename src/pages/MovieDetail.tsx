@@ -133,6 +133,7 @@ const MovieDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [similarMoviesLoading, setSimilarMoviesLoading] = useState(false);
   const [showTrailer, setShowTrailer] = useState(false);
+    const [role, setRole] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -147,6 +148,8 @@ const MovieDetailPage: React.FC = () => {
         const data = await getMoviesById(Number(id));
         console.log('Fetched movie data:', data);
         console.log('Movie trailer URL:', data?.trailer);
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      setRole(user?.role);
         
         if (data?.is_premium) {
           setMovie(data as Movie);
@@ -180,6 +183,9 @@ const MovieDetailPage: React.FC = () => {
         const filteredMovies = movies
           .filter((m: Movie) => m.id !== movie.id)
           .slice(0, 6);
+
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      setRole(user?.role);
         
         setSimilarMovies(filteredMovies);
       } catch (error) {
@@ -230,12 +236,14 @@ const MovieDetailPage: React.FC = () => {
 
   if (!movie) {
     return (
+      <div>
+         <Header />
       <div className="bg-black min-h-screen flex flex-col items-center justify-center">
-        <Header />
         <div className="flex flex-col items-center justify-center min-h-[400px]">
           <p className="text-white text-lg font-semibold">Movie Not Found</p>
         </div>
-        <Footer />
+      </div>
+         <Footer />
       </div>
     );
   }
@@ -246,9 +254,9 @@ const MovieDetailPage: React.FC = () => {
   console.log('Extracted video ID:', videoId);
 
   return (
+    <div>
+       <Header />
     <div className="bg-black min-h-screen">
-      <Header />
-
       <motion.div
         variants={containerVariant}
         initial="hidden"
@@ -442,7 +450,7 @@ const MovieDetailPage: React.FC = () => {
                   genre={similarMovie.genre}
                   is_premium={similarMovie.is_premium}
                   quality="HD"
-                  role={localStorage.getItem("role") || ""}
+                  role={role || undefined}
                 />
               </motion.div>
             ))}
@@ -456,8 +464,8 @@ const MovieDetailPage: React.FC = () => {
           </motion.p>
         )}
       </motion.div>
-
-      <Footer />
+    </div>
+     <Footer />
     </div>
   );
 };

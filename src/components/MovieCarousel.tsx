@@ -28,7 +28,13 @@ const MovieCarousel: React.FC = () => {
   const [popular, setPopular] = useState<Movie[]>([]);
   const [mixedGenre, setMixedGenre] = useState<Movie[]>([]);
   const [topRated, setTopRated] = useState<Movie[]>([]);
-  const [role, setRole] = useState<string | null>(null); 
+  const [role, setRole] = useState<string | null>(null);
+  const [loadingStates, setLoadingStates] = useState({
+    featured: true,
+    popular: true,
+    mixedGenre: true,
+    topRated: true
+  });
   const navigate = useNavigate();
 
   const featuredRef = useRef(null);
@@ -66,6 +72,8 @@ const MovieCarousel: React.FC = () => {
     } catch (error) {
       console.error("Error fetching mixed genre movies:", error);
       setMixedGenre([]);
+    } finally {
+      setLoadingStates(prev => ({ ...prev, mixedGenre: false }));
     }
   };
 
@@ -91,6 +99,8 @@ const MovieCarousel: React.FC = () => {
       } catch (error) {
         console.error("Error fetching all movies:", error);
         setFeatured([]);
+      } finally {
+        setLoadingStates(prev => ({ ...prev, featured: false }));
       }
 
       try {
@@ -105,10 +115,11 @@ const MovieCarousel: React.FC = () => {
       } catch (error) {
         console.error("Error fetching romance movies:", error);
         setPopular([]);
+      } finally {
+        setLoadingStates(prev => ({ ...prev, popular: false }));
       }
 
-
-        try {
+      try {
         const allMoviesResponse = await getAllMovies();
         const allMovies = allMoviesResponse?.movies || allMoviesResponse;
         if (allMovies && Array.isArray(allMovies)) {
@@ -120,10 +131,11 @@ const MovieCarousel: React.FC = () => {
       } catch (error) {
         console.error("Error fetching top rated old movies:", error);
         setTopRated([]);
+      } finally {
+        setLoadingStates(prev => ({ ...prev, topRated: false }));
       }
 
       await fetchMixedGenreMovies();
-
     };
     
     fetchData();
@@ -133,11 +145,39 @@ const MovieCarousel: React.FC = () => {
     navigate('/all-movies')        
   }
 
+  const renderCarouselSkeletonCards = (count: number = 10) => {
+    return Array.from({ length: count }).map((_, index) => (
+      <motion.div
+        key={`carousel-skeleton-${index}`}
+        style={{ scrollSnapAlign: 'start', flex: '0 0 auto' }}
+        initial={{ opacity: 0, y: 60 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.6,
+          ease: 'easeOut',
+          delay: index * 0.1,
+        }}
+      >
+        <MovieCard
+          id=""
+          title=""
+          imageUrl=""
+          duration=""
+          is_premium={false}
+          genre=""
+          role={role || undefined}
+          isLoading={true}
+        />
+      </motion.div>
+    ));
+  };
+
   const renderCarousel = (
     title: string,
     movies: Movie[],
     ref: React.RefObject<HTMLDivElement>,
-    inView: boolean
+    inView: boolean,
+    isLoading: boolean
   ) => (
     <div className="px-6 md:px-16 text-white mb-10 ">
       <div className="flex items-center justify-between w-full mb-4">
@@ -155,45 +195,49 @@ const MovieCarousel: React.FC = () => {
         className="flex overflow-x-scroll space-x-4 scrollbar-hide py-4 flex-nowrap "
         style={{ scrollSnapType: 'x mandatory', scrollBehavior: 'smooth' }}
       >
-        {movies.map((movie, index) => (
-          <motion.div
-            key={movie.id}
-            style={{ scrollSnapAlign: 'start', flex: '0 0 auto' }}
-            initial={{ opacity: 0, y: 60 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{
-              duration: 0.6,
-              ease: 'easeOut',
-              delay: index * 0.2,
-            }}
-          >
+        {isLoading ? (
+          renderCarouselSkeletonCards()
+        ) : (
+          movies.map((movie, index) => (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ delay: index * 0.2 + 0.3, duration: 0.5 }}
+              key={movie.id}
+              style={{ scrollSnapAlign: 'start', flex: '0 0 auto' }}
+              initial={{ opacity: 0, y: 60 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{
+                duration: 0.6,
+                ease: 'easeOut',
+                delay: index * 0.2,
+              }}
             >
-              <MovieCard
-                id={movie.id.toString()}
-                title={movie.title}
-                imageUrl={movie.poster_url}
-                duration={`${movie.duration} min`}
-                genre={movie.genre}
-                role={role || undefined}
-                is_premium={movie.is_premium}
-              />
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={inView ? { opacity: 1 } : {}}
+                transition={{ delay: index * 0.2 + 0.3, duration: 0.5 }}
+              >
+                <MovieCard
+                  id={movie.id.toString()}
+                  title={movie.title}
+                  imageUrl={movie.poster_url}
+                  duration={`${movie.duration} min`}
+                  genre={movie.genre}
+                  role={role || undefined}
+                  is_premium={movie.is_premium}
+                />
+              </motion.div>
             </motion.div>
-          </motion.div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
 
   return (
     <div className="py-4 ">
-      {renderCarousel('Top Rated ', featured, featuredRef, featuredInView)}
-      {renderCarousel('Popular Movies', popular, popularRef, popularInView)}
-      {renderCarousel('CineShuffle ', mixedGenre, mixedGenreRef, mixedGenreInView)}
-      {/* {renderCarousel('Top Rated', topRated, topRatedRef, topRatedInView)} */}
+      {renderCarousel('Top Rated ', featured, featuredRef, featuredInView, loadingStates.featured)}
+      {renderCarousel('Popular Movies', popular, popularRef, popularInView, loadingStates.popular)}
+      {renderCarousel('CineShuffle ', mixedGenre, mixedGenreRef, mixedGenreInView, loadingStates.mixedGenre)}
+      {/* {renderCarousel('Top Rated', topRated, topRatedRef, topRatedInView, loadingStates.topRated)} */}
     </div>
   );
 };
