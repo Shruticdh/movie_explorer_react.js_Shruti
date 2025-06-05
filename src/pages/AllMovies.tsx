@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { getAllMoviesPagination, searchMovies as searchMoviesAPI, getRecommendedMovies, getMoviesByGenre } from '../Services/MovieService';
 import MovieCard from '../components/MovieCard';
 import Header from '../components/header';
@@ -48,6 +48,9 @@ const AllMovies: React.FC = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [didYouMeanSuggestion, setDidYouMeanSuggestion] = useState<string | null>(null);
+
+  // Ref to track clicks outside the suggestion box
+  const searchBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);  
@@ -159,19 +162,29 @@ const AllMovies: React.FC = () => {
             ...movie,
             score: calculateFuzzyScore(query, movie.title),
           }))
-          .filter((movie: Movie & { score: number }) => movie.score > 25)
+          // Modified: Prioritize near-exact matches for complete titles
+          .filter((movie: Movie & { score: number }) => {
+            // If the query is a near-exact match (score > 90), only include those
+            if (movie.score >= 90) return true;
+            // Otherwise, use the original threshold for partial matches
+            return movie.score > 25;
+          })
           .sort((a, b) => b.score - a.score);
+
+        // Modified: If we have a near-exact match, only show that movie
+        const exactMatches = fuzzyResults.filter(movie => movie.score >= 90);
+        const finalResults = exactMatches.length > 0 ? exactMatches : fuzzyResults;
         
         const itemsPerPage = 10;
         const startIndex = (page - 1) * itemsPerPage;
-        const paginatedResults = fuzzyResults.slice(startIndex, startIndex + itemsPerPage);
+        const paginatedResults = finalResults.slice(startIndex, startIndex + itemsPerPage);
         
         movieData = {
           movies: paginatedResults,
           pagination: {
             current_page: page,
-            total_pages: Math.ceil(fuzzyResults.length / itemsPerPage),
-            total_count: fuzzyResults.length,
+            total_pages: Math.ceil(finalResults.length / itemsPerPage),
+            total_count: finalResults.length,
             per_page: itemsPerPage
           }
         };
@@ -278,11 +291,114 @@ const AllMovies: React.FC = () => {
     }
   }, [movies, debouncedSearchTerm, isLoading, isRecommendationMode]);
 
+  // Add click-outside handler
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchBarRef.current && !searchBarRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+        setSuggestions([]);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleRecommendationSubmit = async (preferences: RecommendationPreferences) => {
     try {
       setIsLoading(true);
       setCurrentPreferences(preferences);
-      const recommendations = await getRecommendedMovies(preferences);
+      
+      console.log('Submitting preferences:', preferences);
+      
+      let recommendations = [];
+      
+      try {
+        recommendations = await getRecommendedMovies(preferences);
+        console.log('API recommendations:', recommendations);
+      } catch (apiError) {
+        console.error('API recommendation failed:', apiError);
+        recommendations = [];
+      }
+
+      if (!recommendations || recommendations.length < 5) {
+        console.log('API returned insufficient results, implementing fallback filtering...');
+        
+        try {
+          const allMoviesResponse = await getAllMoviesPagination(1, 500);
+          let allMovies = allMoviesResponse?.movies || [];
+          
+          if (allMovies.length < 100) {
+            const additionalPages = await Promise.all([
+              getAllMoviesPagination(2, 500).catch(() => ({ movies: [] })),
+              getAllMoviesPagination(3, 500).catch(() => ({ movies: [] })),
+            ]);
+            
+            additionalPages.forEach(page => {
+              if (page.movies) {
+                allMovies = [...allMovies, ...page.movies];
+              }
+            });
+          }
+          
+          allMovies = allMovies.filter((movie, index, self) => 
+            index === self.findIndex(m => m.id === movie.id)
+          );
+          
+          console.log('Total movies for filtering:', allMovies.length);
+          
+          let filteredMovies = allMovies.filter((movie: Movie) => {
+            if (preferences.genre && preferences.genre !== 'Any' && preferences.genre !== '') {
+              if (movie.genre.toLowerCase() !== preferences.genre.toLowerCase()) {
+                return false;
+              }
+            }
+            
+            if (preferences.duration_max && preferences.duration_max !== 999) {
+              if (movie.duration > preferences.duration_max) {
+                return false;
+              }
+            }
+            
+            if (preferences.include_premium === false) {
+              if (movie.is_premium) {
+                return false;
+              }
+            }
+            
+            return true;
+          });
+          
+          console.log('Filtered movies:', filteredMovies.length);
+          
+          if (filteredMovies.length > 0) {
+            filteredMovies.sort((a, b) => {
+              if (preferences.include_premium === false) {
+                if (a.is_premium !== b.is_premium) {
+                  return a.is_premium ? 1 : -1;
+                }
+              }
+              return a.duration - b.duration;
+            });
+            
+            recommendations = filteredMovies;
+          } else if (recommendations.length === 0) {
+            recommendations = allMovies.slice(0, 20);
+          }
+        } catch (fallbackError) {
+          console.error('Fallback filtering failed:', fallbackError);
+          
+          try {
+            const fallbackMovies = await getAllMoviesPagination(1, 20);
+            recommendations = fallbackMovies?.movies || [];
+          } catch (finalError) {
+            console.error('Final fallback failed:', finalError);
+            recommendations = [];
+          }
+        }
+      }
 
       if (recommendations && recommendations.length > 0) {
         setMovies(recommendations);
@@ -329,10 +445,7 @@ const AllMovies: React.FC = () => {
   };
 
   const handleSearchBlur = () => {
-    setTimeout(() => {
-      setShowSuggestions(false);
-      setSuggestions([]);
-    }, 150);
+    // Removed the delayed hiding since we now handle it with click-outside
   };
 
   const handleSearchTermChange = (term: string) => {
@@ -362,19 +475,26 @@ const AllMovies: React.FC = () => {
 
   const getRecommendationSummary = () => {
     const parts = [];
-    if (currentPreferences.genre) parts.push(currentPreferences.genre);
+    if (currentPreferences.genre && currentPreferences.genre !== 'Any') {
+      parts.push(currentPreferences.genre);
+    }
     if (currentPreferences.release_year_from && currentPreferences.release_year_to) {
-      parts.push(`${currentPreferences.release_year_from}-${currentPreferences.release_year_to}`);
+      if (currentPreferences.release_year_from !== 1900 || currentPreferences.release_year_to !== 2024) {
+        parts.push(`${currentPreferences.release_year_from}-${currentPreferences.release_year_to}`);
+      }
     }
     if (currentPreferences.duration_max && currentPreferences.duration_max < 999) {
       parts.push(`under ${currentPreferences.duration_max}min`);
     }
-    if (currentPreferences.include_premium === false) parts.push('free only');
-    return parts.join(', ');
+    if (currentPreferences.include_premium === false) {
+      parts.push('free only');
+    }
+    
+    return parts.length > 0 ? parts.join(', ') : 'All preferences';
   };
 
-  // Generate skeleton cards for loading state
-  const renderSkeletonCards = () => {
+  const renderSkeletonCards = () =>
+  {
     return Array.from({ length: 10 }).map((_, index) => (
       <motion.div
         key={`skeleton-${index}`}
@@ -408,14 +528,16 @@ const AllMovies: React.FC = () => {
 
           {!isRecommendationMode && (
             <>
-              <SearchBar
-                searchTerm={searchTerm}
-                setSearchTerm={handleSearchTermChange}
-                suggestions={showSuggestions ? suggestions : []}
-                onSuggestionClick={handleSuggestionClick}
-                onFocus={handleSearchFocus}
-                onBlur={handleSearchBlur}
-              />
+              <div ref={searchBarRef}>
+                <SearchBar
+                  searchTerm={searchTerm}
+                  setSearchTerm={handleSearchTermChange}
+                  suggestions={showSuggestions ? suggestions : []}
+                  onSuggestionClick={handleSuggestionClick}
+                  onFocus={handleSearchFocus}
+                  onBlur={handleSearchBlur}
+                />
+              </div>
               <motion.button
                 onClick={() => setIsQuizOpen(true)}
                 className="mt-4 mb-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer"
